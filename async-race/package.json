@@ -1,0 +1,68 @@
+{
+  "name": "async-race",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --open --force",
+    "deploy": "npm run build && gh-pages -d dist -e async-race",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "format": "prettier --write .",
+    "lint": "eslint .",
+    "stylelint": "stylelint \"src/**/*.css\" --fix",
+    "prepare": "cd .. && husky async-race/.husky",
+    "lint-staged": "lint-staged",
+    "type-check": "tsc --noEmit"
+  },
+  "lint-staged": {
+    "*.{js,ts}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.css": [
+      "stylelint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.7.1",
+    "@commitlint/config-conventional": "^19.7.1",
+    "@eslint/js": "^9.21.0",
+    "@powwow-js/core": "^0.8.0",
+    "@powwow-js/emitter": "^0.8.0",
+    "@powwow-js/nullable": "^0.8.0",
+    "@powwow-js/simple-store": "^0.8.0",
+    "@powwow-js/state-machine": "^0.8.0",
+    "@tailwindcss/vite": "^4.0.8",
+    "autoprefixer": "^10.4.20",
+    "commitlint": "^19.7.1",
+    "eslint": "^9.21.0",
+    "eslint-config-prettier": "^10.0.2",
+    "eslint-import-resolver-alias": "^1.1.2",
+    "eslint-import-resolver-typescript": "^3.9.1",
+    "eslint-plugin-import": "^2.31.0",
+    "gh-pages": "^6.3.0",
+    "globals": "^16.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3",
+    "postcss": "^8.5.3",
+    "prettier": "^3.5.2",
+    "stylelint": "^16.16.0",
+    "stylelint-config-clean-order": "^7.0.0",
+    "stylelint-config-standard": "^37.0.0",
+    "tailwindcss": "^4.0.8",
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.24.1",
+    "vite": "^6.1.1"
+  },
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.0.8",
+    "@typescript-eslint/eslint-plugin": "^8.25.0",
+    "@typescript-eslint/parser": "^8.25.0",
+    "modern-normalize": "^3.0.1"
+  }
+}

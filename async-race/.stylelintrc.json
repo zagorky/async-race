@@ -1,0 +1,12 @@
+{
+  "extends": ["stylelint-config-clean-order", "stylelint-config-standard"],
+  "rules": {
+    "at-rule-no-unknown": null,
+    "property-no-vendor-prefix": [
+      true,
+      {
+        "severity": "warning"
+      }
+    ]
+  }
+}
