@@ -26,15 +26,24 @@ export default [
       },
     },
   },
-
-  js.configs.recommended,
-  importPlugin.flatConfigs.recommended,
   {
-    rules: {
-      'import/no-cycle': 'error',
+    languageOptions: {
+      globals: globals.browser,
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
   },
+
+  js.configs.recommended,
+  pluginJs.configs.recommended,
+  importPlugin.flatConfigs.recommended,
+  eslintPluginUnicorn.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
+  ...tseslint.configs.strict,
+  ...tseslint.configs.stylistic,
+
   {
     ignores: [
       'commitlint.config.js',
@@ -46,28 +55,9 @@ export default [
     ],
   },
   {
-    languageOptions: {
-      globals: globals.browser,
-      parserOptions: {
-        projectService: true,
-        tsconfigRootDir: import.meta.dirname,
-      },
-    },
-  },
-  eslintPluginUnicorn.configs.recommended,
-  {
-    rules: {
-      'unicorn/better-regex': 'warn',
-      semi: ['error', 'always'],
-      'max-lines-per-function': ['error', 40],
-    },
-  },
-  pluginJs.configs.recommended,
-  ...tseslint.configs.strict,
-  ...tseslint.configs.stylistic,
-  {
     rules: {
       'unicorn/prefer-event-target': 'off',
+      'unicorn/better-regex': 'warn',
       'unicorn/no-array-callback-reference': 'off',
       'unicorn/no-array-for-each': 'off',
       'unicorn/no-array-reduce': 'off',
@@ -75,6 +65,7 @@ export default [
       'unicorn/no-null': 'off',
       'unicorn/number-literal-case': 'off',
       'unicorn/numeric-separators-style': 'off',
+      'unicorn/prefer-global-this': 'off',
       'unicorn/prevent-abbreviations': [
         'error',
         {
@@ -88,6 +79,9 @@ export default [
           },
         },
       ],
+      'import/no-cycle': 'error',
+      semi: ['error', 'always'],
+      'max-lines-per-function': ['error', 50],
       'no-magic-numbers': [
         'error',
         {
@@ -116,8 +110,7 @@ export default [
       ],
       '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
       '@typescript-eslint/consistent-type-imports': 'error',
-
-      '@typescript-eslint/explicit-function-return-type': 'error',
+      '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/consistent-type-assertions': ['error', { assertionStyle: 'never' }],
       '@typescript-eslint/explicit-member-accessibility': [
         'error',
