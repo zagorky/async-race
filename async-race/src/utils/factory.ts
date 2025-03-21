@@ -8,6 +8,13 @@ const H1 = (children: Children): HTMLHeadingElement =>
     children,
   });
 
+const H2 = (children: Children): HTMLHeadingElement =>
+  createElement({
+    tag: 'h1',
+    cssClasses: ['text-xl', 'font-bold', 'text-pink-800', 'p-3', 'text-center'],
+    children,
+  });
+
 const Main = (children: Children): HTMLElement =>
   createElement({
     tag: 'main',
@@ -48,6 +55,20 @@ const Button = (children: Children): HTMLButtonElement => {
     children,
   });
 };
+
+const Nav = (children: Children): HTMLElement =>
+  createElement({
+    tag: 'nav',
+    children,
+    cssClasses: ['flex', 'justify-center', 'items-center'],
+  });
+
+const Header = (children: Children): HTMLElement =>
+  createElement({
+    tag: 'header',
+    children,
+    cssClasses: ['flex', 'justify-center', 'items-center'],
+  });
 
 const Input = (children: Children, attributes?: Record<string, string>): HTMLInputElement =>
   createElement({
@@ -122,9 +143,12 @@ const TextArea = (children: Children, attributes?: Record<string, string>): HTML
 
 export {
   H1,
+  H2,
   Main,
   Section,
+  Header,
   Div,
+  Nav,
   Button,
   Input,
   Label,

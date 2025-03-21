@@ -1,19 +1,18 @@
-// import { Router } from '~/router.ts';
-// import { store } from './store/store';
-// import { selectors } from '~/store/selectors.ts';
-// import { replaceCssClass } from './utils/helpers';
-//
-// replaceCssClass(document.body, [], ['bg-fuchsia-100']);
-//
-// const currentHash = globalThis.location.hash || '#/';
-//
-// globalThis.addEventListener('DOMContentLoaded', () => {
-//   if (store.useSelector(selectors.hasDataForStart)) {
-//     Router.navigate(currentHash);
-//     return;
-//   } else {
-//     Router.navigate('#/');
-//     return;
-//   }
-// });
-console.log('');
+import { navigator, router } from '~/router.ts';
+import { assertIsInstanceOf } from '@powwow-js/core';
+
+window.addEventListener('popstate', router);
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.body.addEventListener('click', (event) => {
+    assertIsInstanceOf(HTMLElement, event.target);
+    if (event.target.matches('[data-href]')) {
+      event.preventDefault();
+      const href = event.target.dataset.href;
+      if (href) {
+        navigator(href);
+      }
+    }
+  });
+  router();
+});
