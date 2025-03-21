@@ -1,5 +1,5 @@
-import type { Children } from '~/utils/types/types.ts';
 import { createElement } from '~/utils/create-element.ts';
+import type { Children } from '~/utils/types/types.ts';
 
 const H1 = (children: Children): HTMLHeadingElement =>
   createElement({
