@@ -15,11 +15,10 @@ export default [
       reportUnusedDisableDirectives: true,
     },
     settings: {
+      'import/parsers': {
+        '@typescript-eslint/parser': ['.ts'],
+      },
       'import/resolver': {
-        alias: {
-          extensions: ['.js', '.ts', '.tsx'],
-          map: [['~', './src']],
-        },
         typescript: {
           alwaysTryTypes: true,
           project: './tsconfig.json',
@@ -31,13 +30,8 @@ export default [
   js.configs.recommended,
   importPlugin.flatConfigs.recommended,
   {
-    files: ['**/*.{js,mjs,cjs, ts}'],
-    languageOptions: {
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-    },
     rules: {
-      'import/no-cycle': ['error', { maxDepth: Infinity }],
+      'import/no-cycle': 'error',
     },
   },
   ...tseslint.configs.recommendedTypeChecked,
