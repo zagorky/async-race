@@ -14,8 +14,6 @@ export async function createGarageView() {
     console.log(cars);
     if (cars && Array.isArray(cars)) {
       cars.forEach((car) => {
-        // const carElement = createCarView(car);
-        // container.append(carElement);
         container.append(createCarView(car));
       });
     }
@@ -25,5 +23,3 @@ export async function createGarageView() {
 
   return Section([createHeader(), H2(pageName), container]);
 }
-
-await createGarageView().then((view) => document.body.append(view));
