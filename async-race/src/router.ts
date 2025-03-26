@@ -4,7 +4,7 @@ import { createErrorView } from '~/view/error/error.ts';
 
 type RouteParameters = {
   path: string;
-  view: () => HTMLElement;
+  view: () => Promise<HTMLElement> | HTMLElement;
 };
 
 type MatchesParameters = {
@@ -12,7 +12,7 @@ type MatchesParameters = {
   isPage: boolean;
 };
 
-export function router(): void {
+export async function router(): Promise<void> {
   const routes: RouteParameters[] = [
     { path: '*', view: createErrorView },
     { path: '/', view: createGarageView },
@@ -34,11 +34,11 @@ export function router(): void {
       isPage: true,
     };
   }
-  const view = match.route.view();
-  document.body.replaceChildren(view);
+  const view = await match.route.view();
+  document.body.append(view);
 }
 
-export function navigator(url: string) {
+export async function navigator(url: string) {
   history.pushState(null, '', url);
-  router();
+  await router();
 }

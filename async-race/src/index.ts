@@ -1,7 +1,7 @@
 import { navigator, router } from '~/router.ts';
 import { assertIsInstanceOf } from '@powwow-js/core';
 
-window.addEventListener('popstate', router);
+window.addEventListener('popstate', () => void router());
 
 document.addEventListener('DOMContentLoaded', () => {
   document.body.addEventListener('click', (event) => {
@@ -10,9 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
       event.preventDefault();
       const href = event.target.dataset.href;
       if (href) {
-        navigator(href);
+        void navigator(href);
       }
     }
   });
-  router();
+  void router();
 });

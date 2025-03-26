@@ -1,25 +1,14 @@
-type GarageDataType = {
-  name: string;
-  color: string;
-  id: number;
-};
-
-type WinnersDataType = {
-  id: number;
-  wins: number;
-  time: number;
-};
-
-type QueryParametersType = Record<string, string | number>[];
+type QueryParametersType = { key: string; value: string | number }[];
 
 const baseUrl = 'http://127.0.0.1:3000';
 
-const path = {
+export const path = {
   garage: '/garage',
   winners: '/winners',
+  engine: '/engine',
 };
 
-const paginate = {
+export const paginate = {
   page: {
     key: '_page',
     value: 2,
@@ -30,11 +19,9 @@ const paginate = {
   },
 };
 
-const query: QueryParametersType = [{ key: '', value: '' }, paginate.page, paginate.limit];
+export const query: QueryParametersType = [{ key: '', value: '' }, paginate.page, paginate.limit];
 
-console.log(query);
-
-async function getData<T>(path: string, query?: QueryParametersType): Promise<T> {
+export async function getData<T>(path: string, query?: QueryParametersType): Promise<T> {
   const queryParameters = query
     ? `?${query.map((element) => `${element.key}=${element.value}`).join('&')}`
     : '';
@@ -50,7 +37,7 @@ async function getData<T>(path: string, query?: QueryParametersType): Promise<T>
     });
 }
 
-async function postData<T>(data: T, path: string): Promise<T> {
+export async function postData<T>(data: T, path: string): Promise<T> {
   return await fetch(`${baseUrl}${path}`, {
     method: 'POST',
     headers: {
@@ -68,7 +55,7 @@ async function postData<T>(data: T, path: string): Promise<T> {
     });
 }
 
-async function patchData<T>(id: number, data: T, path: string): Promise<T> {
+export async function patchData<T>(id: number, data: T, path: string): Promise<T> {
   return await fetch(`${baseUrl}${path}/${id}`, {
     method: 'PATCH',
     headers: {
@@ -86,7 +73,7 @@ async function patchData<T>(id: number, data: T, path: string): Promise<T> {
     });
 }
 
-async function deleteData<T>(id: number, path: string): Promise<T> {
+export async function deleteData<T>(id: number, path: string): Promise<T> {
   return await fetch(`${baseUrl}${path}/${id}`, {
     method: 'DELETE',
   })
@@ -99,14 +86,3 @@ async function deleteData<T>(id: number, path: string): Promise<T> {
       throw error;
     });
 }
-
-const getGarageData = await getData<GarageDataType>(path.garage);
-const getWinnersData = await getData<WinnersDataType>(path.winners);
-
-console.log(
-  getGarageData,
-  getWinnersData,
-  await postData({}, ''),
-  await patchData(0, {}, ''),
-  await deleteData(0, ''),
-);
