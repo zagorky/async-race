@@ -5,7 +5,6 @@ import { replaceCssClass } from '~/utils/helpers.ts';
 export function createCarView(carData: GarageDataType): HTMLDivElement {
   const { color, name } = carData;
   const carName = Span(name);
-  const svgContainer = Div('', { id: 'svg-container' });
   const container = Div('');
   replaceCssClass(
     container,
@@ -13,7 +12,16 @@ export function createCarView(carData: GarageDataType): HTMLDivElement {
     ['justify-start', 'items-start', 'w-full'],
   );
 
-  const car = `
+  const svgContainer = createCarPicture(color);
+  container.append(carName, svgContainer);
+
+  return container;
+}
+
+export function createCarPicture(color: string) {
+  const svgContainer = Div('', { id: 'svg-container' });
+
+  const cat = `
 <svg width=75 enable-background="new 0 0 512 512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><g id="_x30_3_x2C__cat_x2C__kitty_x2C__animal_x2C__feline_x2C__animals">
   <g id="XMLID_737_">
     <path id="XMLID_43_" d="m141 480.606h-42.742c-42.601 0-77.258-34.657-77.258-77.258v-225.646c0-59.053 48.043-107.096 107.096-107.096h2.904c5.523 0 10 4.477 10 10s-4.477 10-10 10h-2.904c-48.025 0-87.096 39.072-87.096 87.096v225.646c0 31.572 25.686 57.258 57.258 57.258h42.742c5.523 0 10 4.478 10 10 0 5.523-4.477 10-10 10z" fill="#f49d3d"></path>
@@ -30,8 +38,7 @@ export function createCarView(carData: GarageDataType): HTMLDivElement {
 </g>
 </svg>`;
 
-  svgContainer.insertAdjacentHTML('beforeend', car);
-  container.append(carName, svgContainer);
+  svgContainer.insertAdjacentHTML('beforeend', cat);
 
-  return container;
+  return svgContainer;
 }
