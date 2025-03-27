@@ -37,8 +37,8 @@ export async function getData<T>(path: string, query?: QueryParametersType): Pro
     });
 }
 
-export async function postData<T>(data: T, path: string): Promise<T> {
-  return await fetch(`${baseUrl}${path}`, {
+export async function postData<T>(data: T, path: string): Promise<void> {
+  await fetch(`${baseUrl}${path}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -46,9 +46,6 @@ export async function postData<T>(data: T, path: string): Promise<T> {
     body: JSON.stringify(data),
   })
     .then((response) => response.json())
-    .then((data: T) => {
-      return data;
-    })
     .catch((error) => {
       console.error(path, error);
       throw error;
@@ -73,14 +70,12 @@ export async function patchData<T>(id: number, data: T, path: string): Promise<T
     });
 }
 
-export async function deleteData<T>(id: number, path: string): Promise<T> {
-  return await fetch(`${baseUrl}${path}/${id}`, {
+export async function deleteData(id: number, path: string): Promise<void> {
+  console.log(`${baseUrl}${path}/${id}`);
+  await fetch(`${baseUrl}${path}/${id}`, {
     method: 'DELETE',
   })
     .then((response) => response.json())
-    .then((data: T) => {
-      return data;
-    })
     .catch((error) => {
       console.error(path, error);
       throw error;

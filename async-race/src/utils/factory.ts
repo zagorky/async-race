@@ -40,9 +40,9 @@ const Button = (children: Children): HTMLButtonElement => {
   return createElement({
     tag: 'button',
     cssClasses: [
-      'w-114',
-      'px-4',
-      'py-2',
+      'w-32',
+      'px-1',
+      'py-1',
       'border',
       'border-gray-300',
       'bg-emerald-500',
@@ -60,14 +60,14 @@ const Nav = (children: Children): HTMLElement =>
   createElement({
     tag: 'nav',
     children,
-    cssClasses: ['flex', 'justify-center', 'items-center'],
+    cssClasses: ['flex', 'justify-center', 'items-center', 'w-full'],
   });
 
 const Header = (children: Children): HTMLElement =>
   createElement({
     tag: 'header',
     children,
-    cssClasses: ['flex', 'justify-center', 'items-center'],
+    cssClasses: ['flex', 'items-center'],
   });
 
 const Input = (children: Children, attributes?: Record<string, string>): HTMLInputElement =>
@@ -106,7 +106,7 @@ const Link = (children: Children, url: string): HTMLAnchorElement =>
       'data-href': `${url}`,
       href: `${url}`,
     },
-    cssClasses: ['w-full'],
+    cssClasses: ['hover:text-pink-500', 'hover:underline', 'p-1', 'm-2'],
     children,
   });
 

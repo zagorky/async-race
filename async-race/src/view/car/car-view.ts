@@ -1,12 +1,17 @@
 import type { GarageDataType } from '~/api/garage-api.ts';
 import { Div, Span } from '~/utils/factory.ts';
+import { replaceCssClass } from '~/utils/helpers.ts';
 
 export function createCarView(carData: GarageDataType): HTMLDivElement {
   const { color, name } = carData;
-  console.log(color, name);
   const carName = Span(name);
   const svgContainer = Div('');
   const container = Div('');
+  replaceCssClass(
+    container,
+    ['justify-center', 'items-center'],
+    ['justify-start', 'items-start', 'w-full'],
+  );
 
   const car = `
 <svg width=75 enable-background="new 0 0 512 512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><g id="_x30_3_x2C__cat_x2C__kitty_x2C__animal_x2C__feline_x2C__animals">

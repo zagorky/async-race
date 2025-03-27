@@ -1,25 +1,38 @@
-import { Div, H2, Section } from '~/utils/factory.ts';
+import { Button, Div, H2, Section } from '~/utils/factory.ts';
 import { createHeader } from '~/view/header/header.ts';
+import { replaceCssClass } from '~/utils/helpers.ts';
 import type { GarageDataType } from '~/api/garage-api.ts';
-import { getCars } from '~/api/garage-api.ts';
-import { createCarView } from '~/view/car/car.ts';
+import { createCarView } from '~/view/car/car-view.ts';
 
-export async function createGarageView() {
+export function createGarageView(cars: GarageDataType[]) {
   const pageName = 'Garage';
+  const controls = Div(createControlsContainer());
+  replaceCssClass(controls, ['flex-col'], ['flex-row', 'flex-wrap']);
   document.title = pageName;
   const container = Div('');
+  replaceCssClass(container, [], ['w-full']);
+  cars.forEach((car) => container.append(createCarView(car)));
+  return Section([createHeader(), H2(pageName), controls, container]);
+}
 
-  try {
-    const cars: GarageDataType[] = await getCars();
-    console.log(cars);
-    if (cars && Array.isArray(cars)) {
-      cars.forEach((car) => {
-        container.append(createCarView(car));
-      });
-    }
-  } catch (error) {
-    console.error('Garage error', error);
-  }
+export function createControlsContainer() {
+  const addCarButton = Button('Add Cat');
 
-  return Section([createHeader(), H2(pageName), container]);
+  const startRaceButton = Button('Start Race');
+
+  const resetRaceButton = Button('Reset Race');
+
+  const generateCarsButton = Button('Generate Cats');
+
+  const previousPageButton = Button('<=');
+
+  const nextPageButton = Button('=>');
+  return [
+    addCarButton,
+    startRaceButton,
+    resetRaceButton,
+    generateCarsButton,
+    previousPageButton,
+    nextPageButton,
+  ];
 }
