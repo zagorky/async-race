@@ -16,5 +16,7 @@ export const setWinner = async (winnerData: WinnersDataType) =>
 
 export const deleteWinner = async (id: number) => await deleteData(id, path.winners);
 
-export const updateCar = async (id: number, winnerData: Pick<WinnersDataType, 'wins' | 'time'>) =>
-  await patchData(id, winnerData, path.winners);
+export const updateWinner = async (
+  id: number,
+  winnerData: Pick<WinnersDataType, 'wins' | 'time'>,
+) => await patchData(id, winnerData, path.winners);

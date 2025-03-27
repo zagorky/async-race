@@ -8,25 +8,21 @@ export function createGarageView(cars: GarageDataType[]) {
   const pageName = 'Garage';
   const controls = Div(createControlsContainer());
   replaceCssClass(controls, ['flex-col'], ['flex-row', 'flex-wrap']);
-  document.title = pageName;
   const container = Div('');
   replaceCssClass(container, [], ['w-full']);
   cars.forEach((car) => container.append(createCarView(car)));
+
   return Section([createHeader(), H2(pageName), controls, container]);
 }
 
 export function createControlsContainer() {
   const addCarButton = Button('Add Cat');
-
   const startRaceButton = Button('Start Race');
-
   const resetRaceButton = Button('Reset Race');
-
   const generateCarsButton = Button('Generate Cats');
-
   const previousPageButton = Button('<=');
-
   const nextPageButton = Button('=>');
+
   return [
     addCarButton,
     startRaceButton,

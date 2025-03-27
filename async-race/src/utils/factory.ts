@@ -1,42 +1,46 @@
 import { createElement } from '~/utils/create-element.ts';
 import type { Children } from '~/utils/types/types.ts';
 
-const H1 = (children: Children): HTMLHeadingElement =>
+export const H1 = (children: Children): HTMLHeadingElement =>
   createElement({
     tag: 'h1',
     cssClasses: ['text-2xl', 'font-bold', 'text-pink-600', 'p-3', 'text-center'],
     children,
   });
 
-const H2 = (children: Children): HTMLHeadingElement =>
+export const H2 = (children: Children): HTMLHeadingElement =>
   createElement({
     tag: 'h1',
     cssClasses: ['text-xl', 'font-bold', 'text-pink-800', 'p-3', 'text-center'],
     children,
   });
 
-const Main = (children: Children): HTMLElement =>
+export const Main = (children: Children): HTMLElement =>
   createElement({
     tag: 'main',
     cssClasses: ['flex', 'flex-col', 'justify-center', 'items-center'],
     children,
   });
 
-const Section = (children: Children): HTMLElement =>
+export const Section = (children: Children): HTMLElement =>
   createElement({
     tag: 'section',
     cssClasses: ['flex', 'flex-col', 'justify-center', 'items-center'],
     children,
   });
 
-const Div = (children: Children): HTMLDivElement =>
+export const Div = (children: Children, attributes?: Record<string, string>): HTMLDivElement =>
   createElement({
     tag: 'div',
     children,
+    attributes: attributes,
     cssClasses: ['flex', 'flex-col', 'justify-center', 'items-center'],
   });
 
-const Button = (children: Children): HTMLButtonElement => {
+export const Button = (
+  children: Children,
+  attributes?: Record<string, string>,
+): HTMLButtonElement => {
   return createElement({
     tag: 'button',
     cssClasses: [
@@ -52,25 +56,26 @@ const Button = (children: Children): HTMLButtonElement => {
       'm-2',
       'cursor-pointer',
     ],
+    attributes: attributes,
     children,
   });
 };
 
-const Nav = (children: Children): HTMLElement =>
+export const Nav = (children: Children): HTMLElement =>
   createElement({
     tag: 'nav',
     children,
     cssClasses: ['flex', 'justify-center', 'items-center', 'w-full'],
   });
 
-const Header = (children: Children): HTMLElement =>
+export const Header = (children: Children): HTMLElement =>
   createElement({
     tag: 'header',
     children,
     cssClasses: ['flex', 'items-center'],
   });
 
-const Input = (children: Children, attributes?: Record<string, string>): HTMLInputElement =>
+export const Input = (children: Children, attributes?: Record<string, string>): HTMLInputElement =>
   createElement({
     tag: 'input',
     children,
@@ -92,14 +97,14 @@ const Input = (children: Children, attributes?: Record<string, string>): HTMLInp
     attributes: attributes,
   });
 
-const Label = (children: Children, forLabel: string): HTMLLabelElement =>
+export const Label = (children: Children, forLabel: string): HTMLLabelElement =>
   createElement({
     tag: 'label',
     children,
     attributes: { type: 'text', for: `${forLabel}` },
   });
 
-const Link = (children: Children, url: string): HTMLAnchorElement =>
+export const Link = (children: Children, url: string): HTMLAnchorElement =>
   createElement({
     tag: 'a',
     attributes: {
@@ -110,30 +115,34 @@ const Link = (children: Children, url: string): HTMLAnchorElement =>
     children,
   });
 
-const Dialog = (children: Children): HTMLDialogElement =>
+export const Dialog = (children: Children): HTMLDialogElement =>
   createElement({
     tag: 'dialog',
     children,
   });
 
-const AudioElement = (source: string): HTMLAudioElement =>
+export const AudioElement = (source: string): HTMLAudioElement =>
   createElement({ tag: 'audio', attributes: { preload: 'auto', src: source } });
 
-const Ul = (children: Children): HTMLUListElement =>
+export const Ul = (children: Children): HTMLUListElement =>
   createElement({ tag: 'ul', children, cssClasses: ['flex', 'flex-col', 'items-end'] });
 
-const Li = (children: Children): HTMLLIElement => createElement({ tag: 'li', children });
+export const Li = (children: Children): HTMLLIElement => createElement({ tag: 'li', children });
 
-const Span = (children: Children): HTMLSpanElement => createElement({ tag: 'span', children });
+export const Span = (children: Children): HTMLSpanElement =>
+  createElement({ tag: 'span', children });
 
-const Form = (children: Children): HTMLFormElement =>
+export const Form = (children: Children): HTMLFormElement =>
   createElement({
     tag: 'form',
     children,
     cssClasses: ['flex', 'items-center', 'justify-center', 'flex-col'],
   });
 
-const TextArea = (children: Children, attributes?: Record<string, string>): HTMLTextAreaElement =>
+export const TextArea = (
+  children: Children,
+  attributes?: Record<string, string>,
+): HTMLTextAreaElement =>
   createElement({
     tag: 'textarea',
     children,
@@ -141,23 +150,23 @@ const TextArea = (children: Children, attributes?: Record<string, string>): HTML
     attributes: { ...attributes },
   });
 
-export {
-  H1,
-  H2,
-  Main,
-  Section,
-  Header,
-  Div,
-  Nav,
-  Button,
-  Input,
-  Label,
-  Link,
-  Dialog,
-  AudioElement,
-  Ul,
-  Li,
-  Span,
-  Form,
-  TextArea,
-};
+export const Table = (children: Children, attributes?: Record<string, string>): HTMLTableElement =>
+  createElement({ tag: 'table', children, attributes });
+
+export const TableHeader = (
+  children: Children,
+  attributes?: Record<string, string>,
+): HTMLTableSectionElement => createElement({ tag: 'thead', children, attributes });
+
+export const TableBody = (
+  children: Children,
+  attributes?: Record<string, string>,
+): HTMLTableSectionElement => createElement({ tag: 'tbody', children, attributes });
+
+export const Row = (children: Children, attributes?: Record<string, string>): HTMLTableRowElement =>
+  createElement({ tag: 'tr', children, attributes });
+
+export const Cell = (
+  children: Children,
+  attributes?: Record<string, string>,
+): HTMLTableCellElement => createElement({ tag: 'th', children, attributes });

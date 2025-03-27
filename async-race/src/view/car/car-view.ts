@@ -5,7 +5,7 @@ import { replaceCssClass } from '~/utils/helpers.ts';
 export function createCarView(carData: GarageDataType): HTMLDivElement {
   const { color, name } = carData;
   const carName = Span(name);
-  const svgContainer = Div('');
+  const svgContainer = Div('', { id: 'svg-container' });
   const container = Div('');
   replaceCssClass(
     container,

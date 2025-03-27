@@ -7,6 +7,6 @@ export async function createGarageController() {
   if (cars) {
     return createGarageView(cars);
   } else {
-    throw new Error('there is no cars');
+    throw new Error('there are no cars');
   }
 }

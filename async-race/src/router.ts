@@ -69,8 +69,8 @@ const config: RouterConfig = {
     {
       path: '/winners',
       view: async (): Promise<HTMLElement> => {
-        const module = await import('../src/view/winners/winners-view.ts');
-        return module.createWinnerView();
+        const module = await import('../src/view/winners/winners-controller.ts');
+        return module.createWinnersController();
       },
     },
   ],
