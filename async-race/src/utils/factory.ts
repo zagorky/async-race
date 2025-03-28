@@ -169,4 +169,20 @@ export const Row = (children: Children, attributes?: Record<string, string>): HT
 export const Cell = (
   children: Children,
   attributes?: Record<string, string>,
-): HTMLTableCellElement => createElement({ tag: 'th', children, attributes });
+): HTMLTableCellElement =>
+  createElement({
+    tag: 'th',
+    children,
+    attributes,
+    cssClasses: [
+      'p-1',
+      'm-1',
+      'border-gray-300',
+      'rounded-md',
+      'shadow-sm',
+      'hover:outline-none',
+      'hover:ring-2',
+      'hover:ring-pink-500',
+      'hover:border-pink-500',
+    ],
+  });

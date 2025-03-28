@@ -1,17 +1,16 @@
 import { Cell, H2, Row, Section, Table, TableHeader } from '~/utils/factory.ts';
 import { createHeader } from '~/view/header/header.ts';
-import type { WinnersDataType } from '~/api/winners-api.ts';
-import type { GarageDataType } from '~/api/garage-api.ts';
 import { createCarPicture } from '~/view/car/car-view.ts';
+import type { WinnerDetailedDataType } from '~/api/winners-api.ts';
 
-export function createWinnersView(winners: (WinnersDataType & GarageDataType)[]) {
+export function createWinnersView(winners: WinnerDetailedDataType[]) {
   const pageName = 'Winners';
   const table = createWinnersTable();
   winners.forEach((winner) => table.append(addWinnerToTable(winner)));
   return Section([createHeader(), H2(pageName), table]);
 }
 
-function addWinnerToTable(winner: WinnersDataType & GarageDataType) {
+function addWinnerToTable(winner: WinnerDetailedDataType) {
   const cat = createCarPicture(winner.color);
   return Row([
     Cell(String(winner.id)),
@@ -24,6 +23,6 @@ function addWinnerToTable(winner: WinnersDataType & GarageDataType) {
 
 function createWinnersTable() {
   return Table(
-    TableHeader(Row([Cell('ID'), Cell('Car'), Cell('Name'), Cell('Wins'), Cell('Time')])),
+    TableHeader(Row([Cell('ID'), Cell('Cat'), Cell('Name'), Cell('Wins'), Cell('Time')])),
   );
 }

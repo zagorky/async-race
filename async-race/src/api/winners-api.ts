@@ -7,6 +7,8 @@ export type WinnersDataType = {
   time: number;
 };
 
+export type WinnerDetailedDataType = WinnersDataType & Omit<GarageDataType, 'id'>;
+
 export const getWinners = async () => {
   await getData<WinnersDataType>(path.winners);
 };

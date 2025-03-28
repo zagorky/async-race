@@ -26,7 +26,7 @@ export async function getData<T>(path: string, query?: QueryParametersType): Pro
     ? `?${query.map((element) => `${element.key}=${element.value}`).join('&')}`
     : '';
 
-  return await fetch(`${baseUrl}${path}${queryParameters}`)
+  return fetch(`${baseUrl}${path}${queryParameters}`)
     .then((response) => response.json())
     .then((data: T) => {
       return data;
@@ -37,15 +37,15 @@ export async function getData<T>(path: string, query?: QueryParametersType): Pro
     });
 }
 
-export async function postData<T>(data: T, path: string): Promise<void> {
-  await fetch(`${baseUrl}${path}`, {
+export async function postData<T>(data: T, path: string): Promise<Response> {
+  return fetch(`${baseUrl}${path}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(data),
   })
-    .then((response) => response.json())
+    .then((response): Promise<Response> => response.json())
     .catch((error) => {
       console.error(path, error);
       throw error;
@@ -53,7 +53,7 @@ export async function postData<T>(data: T, path: string): Promise<void> {
 }
 
 export async function patchData<T>(id: number, data: T, path: string): Promise<T> {
-  return await fetch(`${baseUrl}${path}/${id}`, {
+  return fetch(`${baseUrl}${path}/${id}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -70,12 +70,12 @@ export async function patchData<T>(id: number, data: T, path: string): Promise<T
     });
 }
 
-export async function deleteData(id: number, path: string): Promise<void> {
+export async function deleteData(id: number, path: string): Promise<Response> {
   console.log(`${baseUrl}${path}/${id}`);
-  await fetch(`${baseUrl}${path}/${id}`, {
+  return fetch(`${baseUrl}${path}/${id}`, {
     method: 'DELETE',
   })
-    .then((response) => response.json())
+    .then((response): Promise<Response> => response.json())
     .catch((error) => {
       console.error(path, error);
       throw error;
