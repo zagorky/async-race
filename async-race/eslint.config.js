@@ -9,14 +9,17 @@ import importPlugin from 'eslint-plugin-import';
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   {
-    files: ['**/*.{js,mjs,cjs,ts}'],
+    ignores: ['src/jsx-runtime.ts', '**/engine/*.ts'],
+  },
+  {
+    files: ['**/*.{js,mjs,cjs,ts,tsx}'],
     linterOptions: {
       noInlineConfig: true,
       reportUnusedDisableDirectives: true,
     },
     settings: {
       'import/parsers': {
-        '@typescript-eslint/parser': ['.ts'],
+        '@typescript-eslint/parser': ['.ts,.tsx'],
       },
       'import/resolver': {
         typescript: {

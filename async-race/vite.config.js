@@ -20,4 +20,12 @@ export default defineConfig({
     },
   },
   plugins: [tailwindcss()],
+
+  esbuild: {
+    jsx: 'transform',
+    jsxDev: false,
+    jsxImportSource: '~',
+    jsxInject: `import { jsx } from '~/jsx-runtime.ts';`,
+    jsxFactory: 'jsx.component',
+  },
 });

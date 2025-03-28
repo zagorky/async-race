@@ -24,7 +24,11 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    /* JSX parsing */
+    "jsx": "react-jsx",
+    "jsxImportSource": "~"
   },
   "include": ["src/**/*"],
   "exclude": ["node-modules"]

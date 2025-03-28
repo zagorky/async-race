@@ -76,6 +76,9 @@ const config: RouterConfig = {
   ],
 };
 
+const routerRoot = document.createElement('div');
+document.body.append(routerRoot);
+
 // router
 export async function router(): Promise<void> {
   if (abortController) {
@@ -99,7 +102,7 @@ export async function router(): Promise<void> {
 
   const view = await match.view(signal);
   if (!signal.aborted) {
-    document.body.replaceChildren(view);
+    routerRoot.replaceChildren(view);
   }
 }
 
