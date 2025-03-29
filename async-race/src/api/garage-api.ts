@@ -1,4 +1,5 @@
-import { deleteData, getData, patchData, path, postData } from '~/api/api-handlers.ts';
+import { fetchAndValidateData, path, requestConfig } from '~/api/new-api-handlers.ts';
+import { hasSome } from '@powwow-js/core';
 
 export type GarageDataType = {
   name: string;
@@ -6,13 +7,30 @@ export type GarageDataType = {
   id?: number;
 };
 
-export const getCars = async () => await getData<GarageDataType[]>(path.garage);
+function isGarageData(data: unknown): data is GarageDataType[] {
+  return (
+    Array.isArray(data) &&
+    data.every(
+      (item) =>
+        hasSome<object>(item) &&
+        'name' in item &&
+        'color' in item &&
+        typeof item.name === 'string' &&
+        typeof item.color === 'string',
+    )
+  );
+}
 
-export const getCar = async (id: number) => await getData<GarageDataType>(`${path.garage}/${id}`);
+export const getCars = () => fetchAndValidateData(isGarageData)(path.garage, requestConfig.get);
 
-export const setCar = async (carData: GarageDataType) => await postData(carData, path.garage);
+export const getCar = (id: number) =>
+  fetchAndValidateData(isGarageData)(`${path.garage}/${id}`, requestConfig.get);
 
-export const deleteCar = async (id: number) => await deleteData(id, path.garage);
+export const setCar = (data: unknown) =>
+  fetchAndValidateData(isGarageData)(path.garage, requestConfig.post(data));
 
-export const updateCar = async (id: number, carData: Pick<GarageDataType, 'name' | 'color'>) =>
-  await patchData(id, carData, path.garage);
+export const deleteCar = (id: number) =>
+  fetchAndValidateData(isGarageData)(`${path.garage}/${id}`, requestConfig.delete);
+
+export const updateCar = (id: number, data: unknown) =>
+  fetchAndValidateData(isGarageData)(`${path.garage}/${id}`, requestConfig.patch(data));

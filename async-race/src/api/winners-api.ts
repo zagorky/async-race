@@ -1,5 +1,6 @@
-import { deleteData, getData, patchData, path, postData } from '~/api/api-handlers.ts';
-import type { GarageDataType } from '~/api/garage-api.ts';
+import { getCars } from '~/api/garage-api.ts';
+import { fetchAndValidateData, path, requestConfig } from '~/api/new-api-handlers.ts';
+import { hasSome } from '@powwow-js/core';
 
 export type WinnersDataType = {
   id: number;
@@ -7,41 +8,94 @@ export type WinnersDataType = {
   time: number;
 };
 
-export type WinnerDetailedDataType = WinnersDataType & Omit<GarageDataType, 'id'>;
-
-export const getWinners = async () => {
-  await getData<WinnersDataType>(path.winners);
+export type WinnerDetailedDataType = WinnersDataType & {
+  color: string;
+  name: string;
 };
 
-export const getWinner = async (id: number) =>
-  await getData<WinnersDataType>(`${path.winners}/${id}`);
+//
+// export const getWinners = async () => {
+//   await getData<WinnersDataType>(path.winners);
+// };
+//
+// export const getWinner = async (id: number) =>
+//   await getData<WinnersDataType>(`${path.winners}/${id}`);
+//
+// export const setWinner = async (winnerData: WinnersDataType) =>
+//   await postData(winnerData, path.winners);
+//
+// export const deleteWinner = async (id: number) => await deleteData(id, path.winners);
+//
+// export const updateWinner = async (
+//   id: number,
+//   winnerData: Pick<WinnersDataType, 'wins' | 'time'>,
+// ) => await patchData(id, winnerData, path.winners);
 
-export const setWinner = async (winnerData: WinnersDataType) =>
-  await postData(winnerData, path.winners);
+// export const getDetailedWinners = (): WinnerDetailedDataType[] => {
+//   const garage = getCars();
+//   const winners = getWinners();
+//   return winners.map((winner) => {
+//     const car = garage.find((car) => car.id === winner.id);
+//     if (!car) {
+//       throw new Error('there is no detailed data');
+//     }
+//     return {
+//       id: winner.id,
+//       name: car.name,
+//       color: car.color,
+//       wins: winner.wins,
+//       time: winner.time,
+//     };
+//   });
+// };
 
-export const deleteWinner = async (id: number) => await deleteData(id, path.winners);
+export function getDetailedData() {
+  return Promise.all([getCars(), getWinners()])
+    .then(([garage, winners]) => {
+      return winners.map((winner) => {
+        const car = garage.find((car) => car.id === winner.id);
+        if (!car) {
+          throw new Error('there is no detailed data');
+        }
+        return {
+          id: winner.id,
+          name: car.name,
+          color: car.color,
+          wins: winner.wins,
+          time: winner.time,
+        };
+      });
+    })
+    .catch((error) => {
+      throw error;
+    });
+}
 
-export const updateWinner = async (
-  id: number,
-  winnerData: Pick<WinnersDataType, 'wins' | 'time'>,
-) => await patchData(id, winnerData, path.winners);
+function isWinnersData(data: unknown): data is WinnersDataType[] {
+  return (
+    Array.isArray(data) &&
+    data.every(
+      (item) =>
+        hasSome<object>(item) &&
+        'wins' in item &&
+        'time' in item &&
+        typeof item.wins === 'number' &&
+        typeof item.time === 'number',
+    )
+  );
+}
 
-export const getDetailedWinners = async (): Promise<
-  (WinnersDataType & Omit<GarageDataType, 'id'>)[]
-> => {
-  const garage = await getData<GarageDataType[]>(path.garage);
-  const winners = await getData<WinnersDataType[]>(path.winners);
-  return winners.map((winner) => {
-    const car = garage.find((car) => car.id === winner.id);
-    if (!car) {
-      throw new Error('there is no detailed data');
-    }
-    return {
-      id: winner.id,
-      name: car.name,
-      color: car.color,
-      wins: winner.wins,
-      time: winner.time,
-    };
-  });
-};
+export const getWinners = () =>
+  fetchAndValidateData(isWinnersData)(path.winners, requestConfig.get);
+
+export const getWinner = (id: number) =>
+  fetchAndValidateData(isWinnersData)(`${path.winners}/${id}`, requestConfig.get);
+
+export const setWinner = (data: unknown) =>
+  fetchAndValidateData(isWinnersData)(path.winners, requestConfig.post(data));
+
+export const deleteWinner = (id: number) =>
+  fetchAndValidateData(isWinnersData)(`${path.winners}/${id}`, requestConfig.delete);
+
+export const updateWinner = (id: number, data: unknown) =>
+  fetchAndValidateData(isWinnersData)(`${path.winners}/${id}`, requestConfig.patch(data));
