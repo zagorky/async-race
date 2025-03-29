@@ -44,7 +44,8 @@ export const Button = (
   return createElement({
     tag: 'button',
     cssClasses: [
-      'w-32',
+      'min-w-17',
+      'size-max',
       'px-1',
       'py-1',
       'border',

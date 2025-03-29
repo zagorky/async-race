@@ -4,10 +4,10 @@ import { hasSome } from '@powwow-js/core';
 export type GarageDataType = {
   name: string;
   color: string;
-  id?: number;
+  id: number;
 };
 
-function isGarageData(data: unknown): data is GarageDataType[] {
+export function isGarageData(data: unknown): data is GarageDataType[] {
   return (
     Array.isArray(data) &&
     data.every(

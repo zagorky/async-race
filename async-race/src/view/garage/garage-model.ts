@@ -1,19 +1,21 @@
 import type { GarageDataType } from '~/api/garage-api.ts';
-import { getCars, setCar } from '~/api/garage-api.ts';
+import { getCars } from '~/api/garage-api.ts';
 
-export async function createGarageModel() {
-  const cars = await getCars().catch((error) => console.error('Garage error', error));
+export type GarageModelType = {
+  getCars: () => Promise<GarageDataType[]>;
+};
 
+// export function isGarageModel(data: unknown): data is GarageModelType {
+//   return typeof data === 'object' && hasSome<object>(data) && 'getCars' in data;
+// }
+
+export function createGarageModel(): GarageModelType {
   return {
-    getCars: () => cars,
-    createNewCar: async (data: GarageDataType) => {
-      await setCar(data);
-      await getCars();
-    },
-    // startRace: () => {},
-    // resetRace: () => {},
-    // generateCars: () => {},
-    // prevPage: () => {},
-    // nextPage: () => {},
+    getCars: () =>
+      getCars()
+        .then((cars) => cars)
+        .catch((error) => {
+          throw error;
+        }),
   };
 }

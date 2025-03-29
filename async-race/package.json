@@ -32,7 +32,7 @@
     "@commitlint/cli": "^19.7.1",
     "@commitlint/config-conventional": "^19.7.1",
     "@eslint/js": "^9.21.0",
-    "@powwow-js/core": "^0.8.0",
+    "@powwow-js/core": "^0.9.3",
     "@powwow-js/emitter": "^0.8.0",
     "@powwow-js/nullable": "^0.8.0",
     "@powwow-js/simple-store": "^0.8.0",

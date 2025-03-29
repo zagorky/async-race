@@ -13,42 +13,6 @@ export type WinnerDetailedDataType = WinnersDataType & {
   name: string;
 };
 
-//
-// export const getWinners = async () => {
-//   await getData<WinnersDataType>(path.winners);
-// };
-//
-// export const getWinner = async (id: number) =>
-//   await getData<WinnersDataType>(`${path.winners}/${id}`);
-//
-// export const setWinner = async (winnerData: WinnersDataType) =>
-//   await postData(winnerData, path.winners);
-//
-// export const deleteWinner = async (id: number) => await deleteData(id, path.winners);
-//
-// export const updateWinner = async (
-//   id: number,
-//   winnerData: Pick<WinnersDataType, 'wins' | 'time'>,
-// ) => await patchData(id, winnerData, path.winners);
-
-// export const getDetailedWinners = (): WinnerDetailedDataType[] => {
-//   const garage = getCars();
-//   const winners = getWinners();
-//   return winners.map((winner) => {
-//     const car = garage.find((car) => car.id === winner.id);
-//     if (!car) {
-//       throw new Error('there is no detailed data');
-//     }
-//     return {
-//       id: winner.id,
-//       name: car.name,
-//       color: car.color,
-//       wins: winner.wins,
-//       time: winner.time,
-//     };
-//   });
-// };
-
 export function getDetailedData() {
   return Promise.all([getCars(), getWinners()])
     .then(([garage, winners]) => {

@@ -1,12 +1,15 @@
 import { createGarageModel } from '~/view/garage/garage-model.ts';
+import { createPopup } from '~/utils/modal.ts';
 import { createGarageView } from '~/view/garage/garage-view.ts';
 
 export async function createGarageController() {
-  const model = await createGarageModel();
-  const cars = model.getCars();
-  if (cars) {
+  try {
+    const model = createGarageModel();
+    const cars = await model.getCars();
     return createGarageView(cars);
-  } else {
-    throw new Error('there are no cars');
+  } catch (error) {
+    const popup = createPopup({ children: 'error' });
+    popup.showModal();
+    throw error;
   }
 }

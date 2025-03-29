@@ -10,7 +10,9 @@ export function createGarageView(cars: GarageDataType[]) {
   replaceCssClass(controls, ['flex-col'], ['flex-row', 'flex-wrap']);
   const container = Div('');
   replaceCssClass(container, [], ['w-full']);
-  cars.forEach((car) => container.append(createCarView(car)));
+  cars.forEach((car) => {
+    container.append(createCarView(car));
+  });
 
   return Section([createHeader(), H2(pageName), controls, container]);
 }
