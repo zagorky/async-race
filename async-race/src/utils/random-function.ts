@@ -10,3 +10,9 @@ export function shuffleArray<T>(array: T[]): T[] {
   }
   return shuffled;
 }
+
+export function getRandomColor() {
+  const min = 100;
+  const max = 255;
+  return `rgb(${randomFunction(min, max)},${randomFunction(min, max)},${randomFunction(min, max)})`;
+}

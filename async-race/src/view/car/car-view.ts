@@ -1,8 +1,13 @@
 import type { GarageDataType } from '~/api/garage-api.ts';
+import { deleteCar, updateCar } from '~/api/garage-api.ts';
 import { Button, Div, Span } from '~/utils/factory.ts';
 import { replaceCssClass } from '~/utils/helpers.ts';
+import { getRandomColor } from '~/utils/random-function.ts';
+import { createPopup } from '~/utils/modal.ts';
 
-export function createCarView(carData: GarageDataType): HTMLDivElement {
+//TODO нужно разделить на контроллер и модель тоже, вынести сулаштели. подумать как сделать перерендер страницы, все таки нужен емиттер...
+
+export function createCarView(carData: GarageDataType) {
   const { color, name } = carData;
   const carName = Span(name);
   const container = Div('');
@@ -11,15 +16,44 @@ export function createCarView(carData: GarageDataType): HTMLDivElement {
     ['justify-center', 'items-center'],
     ['justify-start', 'items-start', 'w-full'],
   );
-
   const svgContainer = createCarPicture(color);
-
-  const updateCar = Button('Update', { id: `update-${carData.id}` });
-  const removeCar = Button('Remove', { id: `remove-${carData.id}` });
-  const startCar = Button('Start', { id: `start-${carData.id}` });
-  const returnCar = Button('Return', { id: `return-${carData.id}` });
-  container.append(updateCar, removeCar, startCar, returnCar, carName, svgContainer);
-
+  const updateCarButton = Button('Update', { id: `update-${carData.id}` });
+  updateCarButton.addEventListener('click', () => {
+    // проба пера
+    updateCar(carData.id, { color: getRandomColor() })
+      .then((data) => {
+        console.log(`car ${carData.id} is updated`);
+        createCarPicture(data.color);
+      })
+      .catch(() => {
+        console.log('error in update');
+        const popup = createPopup({ children: 'Update failed' });
+        popup.showModal();
+      });
+  });
+  const removeCarButton = Button('Remove', { id: `remove-${carData.id}` });
+  removeCarButton.addEventListener('click', () => {
+    // проба пера
+    deleteCar(carData.id)
+      .then(() => {
+        console.log(`car ${carData.id} is deleted`);
+      })
+      .catch(() => {
+        console.log('error in delete');
+        const popup = createPopup({ children: 'delete failed' });
+        popup.showModal();
+      });
+  });
+  const startCarButton = Button('Start', { id: `start-${carData.id}` });
+  const returnCarButton = Button('Return', { id: `return-${carData.id}` });
+  container.append(
+    updateCarButton,
+    removeCarButton,
+    startCarButton,
+    returnCarButton,
+    carName,
+    svgContainer,
+  );
   return container;
 }
 

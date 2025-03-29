@@ -21,16 +21,26 @@ export function isGarageData(data: unknown): data is GarageDataType[] {
   );
 }
 
+export function isSingleGarageData(data: unknown): data is GarageDataType {
+  return (
+    hasSome<object>(data) &&
+    'name' in data &&
+    'color' in data &&
+    typeof data.name === 'string' &&
+    typeof data.color === 'string'
+  );
+}
+
 export const getCars = () => fetchAndValidateData(isGarageData)(path.garage, requestConfig.get);
 
 export const getCar = (id: number) =>
-  fetchAndValidateData(isGarageData)(`${path.garage}/${id}`, requestConfig.get);
+  fetchAndValidateData(isSingleGarageData)(`${path.garage}/${id}`, requestConfig.get);
 
 export const setCar = (data: unknown) =>
   fetchAndValidateData(isGarageData)(path.garage, requestConfig.post(data));
 
 export const deleteCar = (id: number) =>
-  fetchAndValidateData(isGarageData)(`${path.garage}/${id}`, requestConfig.delete);
+  fetchAndValidateData(isSingleGarageData)(`${path.garage}/${id}`, requestConfig.delete);
 
 export const updateCar = (id: number, data: unknown) =>
-  fetchAndValidateData(isGarageData)(`${path.garage}/${id}`, requestConfig.patch(data));
+  fetchAndValidateData(isSingleGarageData)(`${path.garage}/${id}`, requestConfig.patch(data));
