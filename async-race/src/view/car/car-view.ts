@@ -1,5 +1,5 @@
 import type { GarageDataType } from '~/api/garage-api.ts';
-import { Div, Span } from '~/utils/factory.ts';
+import { Button, Div, Span } from '~/utils/factory.ts';
 import { replaceCssClass } from '~/utils/helpers.ts';
 
 export function createCarView(carData: GarageDataType): HTMLDivElement {
@@ -13,7 +13,12 @@ export function createCarView(carData: GarageDataType): HTMLDivElement {
   );
 
   const svgContainer = createCarPicture(color);
-  container.append(carName, svgContainer);
+
+  const updateCar = Button('Update', { id: `update-${carData.id}` });
+  const removeCar = Button('Remove', { id: `remove-${carData.id}` });
+  const startCar = Button('Start', { id: `start-${carData.id}` });
+  const returnCar = Button('Return', { id: `return-${carData.id}` });
+  container.append(updateCar, removeCar, startCar, returnCar, carName, svgContainer);
 
   return container;
 }

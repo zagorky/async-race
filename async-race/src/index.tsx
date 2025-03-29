@@ -1,13 +1,13 @@
 import { navigator, router } from '~/router.ts';
 import { assertIsInstanceOf } from '@powwow-js/core';
 
-import { App } from '~/app.tsx';
-import { Popik } from '~/engine/popik.ts';
+// import { App } from '~/app.tsx';
+// import { Popik } from '~/engine/popik.ts';
+//
+// const popikRoot = document.createElement('div');
+// document.body.append(popikRoot);
 
-const popikRoot = document.createElement('div');
-document.body.append(popikRoot);
-
-Popik.render(<App />, popikRoot);
+// Popik.render(<App />, popikRoot);
 
 window.addEventListener('popstate', () => {
   router().catch((error) => {
