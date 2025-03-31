@@ -2,58 +2,35 @@ import type { GarageDataType } from '~/api/garage-api.ts';
 import { deleteCar, updateCar } from '~/api/garage-api.ts';
 import { Button, Div, Span } from '~/utils/factory.ts';
 import { replaceCssClass } from '~/utils/helpers.ts';
-import { getRandomColor } from '~/utils/random-function.ts';
-import { createPopup } from '~/utils/modal.ts';
-
-//TODO нужно разделить на контроллер и модель тоже, вынести сулаштели. подумать как сделать перерендер страницы, все таки нужен емиттер...
+import { createErrorModal, createUpdateCarModal } from '~/view/modals.ts';
 
 export function createCarView(carData: GarageDataType) {
-  const { color, name } = carData;
+  const { id, color, name } = carData;
   const carName = Span(name);
-  const container = Div('');
+  const container = Div('', { id: `car-${id}` });
   replaceCssClass(
     container,
     ['justify-center', 'items-center'],
     ['justify-start', 'items-start', 'w-full'],
   );
   const svgContainer = createCarPicture(color);
-  const updateCarButton = Button('Update', { id: `update-${carData.id}` });
-  updateCarButton.addEventListener('click', () => {
-    // проба пера
-    updateCar(carData.id, { color: getRandomColor() })
-      .then((data) => {
-        console.log(`car ${carData.id} is updated`);
-        createCarPicture(data.color);
-      })
-      .catch(() => {
-        console.log('error in update');
-        const popup = createPopup({ children: 'Update failed' });
-        popup.showModal();
-      });
-  });
-  const removeCarButton = Button('Remove', { id: `remove-${carData.id}` });
-  removeCarButton.addEventListener('click', () => {
-    // проба пера
-    deleteCar(carData.id)
-      .then(() => {
-        console.log(`car ${carData.id} is deleted`);
-      })
-      .catch(() => {
-        console.log('error in delete');
-        const popup = createPopup({ children: 'delete failed' });
-        popup.showModal();
-      });
-  });
-  const startCarButton = Button('Start', { id: `start-${carData.id}` });
-  const returnCarButton = Button('Return', { id: `return-${carData.id}` });
-  container.append(
+
+  const { updateCarButton, removeCarButton, startCarButton, returnCarButton } = createCarControls(
+    carData,
+    (updatedData) => {
+      handleUpdateCar(updatedData, container);
+    },
+  );
+
+  const controlsContainer = Div([
     updateCarButton,
     removeCarButton,
     startCarButton,
     returnCarButton,
-    carName,
-    svgContainer,
-  );
+  ]);
+
+  replaceCssClass(controlsContainer, ['flex-col'], ['flex-row']);
+  container.append(controlsContainer, carName, svgContainer);
   return container;
 }
 
@@ -80,4 +57,42 @@ export function createCarPicture(color: string) {
   svgContainer.insertAdjacentHTML('beforeend', cat);
 
   return svgContainer;
+}
+
+function createCarControls(carData: GarageDataType, onUpdate: (data: GarageDataType) => void) {
+  const updateCarButton = Button('Update', { id: `update-${carData.id}` });
+  updateCarButton.addEventListener('click', () => {
+    const modal = createUpdateCarModal(carData, (updatedData) => onUpdate(updatedData));
+    document.body.append(modal);
+    modal.showModal();
+  });
+  const removeCarButton = Button('Remove', { id: `remove-${carData.id}` });
+  removeCarButton.addEventListener('click', () => {
+    handleRemoveCar(carData);
+  });
+  const startCarButton = Button('Start', { id: `start-${carData.id}` });
+  const returnCarButton = Button('Return', { id: `return-${carData.id}` });
+  return {
+    updateCarButton,
+    removeCarButton,
+    startCarButton,
+    returnCarButton,
+  };
+}
+
+function handleRemoveCar(carData: GarageDataType) {
+  deleteCar(carData.id)
+    .then(() => {
+      console.log(`car ${carData.id} is deleted`);
+    })
+    .catch((error: Error) => createErrorModal(`error in delete ${error.message}`));
+}
+
+function handleUpdateCar(carData: GarageDataType, container: HTMLElement) {
+  updateCar(carData.id, { color: carData.color, name: carData.name })
+    .then((data) => {
+      const updatedCar = createCarView(data);
+      container.replaceWith(updatedCar);
+    })
+    .catch((error: Error) => createErrorModal(`Error in update ${error.message}`));
 }

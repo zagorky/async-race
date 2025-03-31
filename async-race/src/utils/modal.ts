@@ -1,10 +1,12 @@
 import { Button, Dialog, Div } from './factory.ts';
 import type { ModalProperties } from '~/utils/types/types.ts';
+import { replaceCssClass } from '~/utils/helpers.ts';
 
 function createPopup({ children, onClose }: ModalProperties): HTMLDialogElement {
   const closeButton = Button('Close');
 
   const popupContainer = Div(closeButton);
+  replaceCssClass(popupContainer, [], ['bg-gray-100', 'rounded-lg', 'p-4']);
 
   const dialog = Dialog(popupContainer);
 
