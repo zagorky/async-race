@@ -37,7 +37,7 @@ export const getCar = (id: number) =>
   fetchAndValidateData(isSingleGarageData)(`${path.garage}/${id}`, requestConfig.get);
 
 export const setCar = (data: unknown) =>
-  fetchAndValidateData(isGarageData)(path.garage, requestConfig.post(data));
+  fetchAndValidateData(isSingleGarageData)(path.garage, requestConfig.post(data));
 
 // export const deleteCar = (id: number) =>
 //   fetchAndValidateData(isSingleGarageData)(`${path.garage}/${id}`, requestConfig.delete);

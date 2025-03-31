@@ -46,33 +46,45 @@ export function createUpdateCarModal(
   return modal;
 }
 
-// export function createAddCarModal() {
-//   const colorInput = Input('Color', {
-//     id: `color-${ID}`,
-//     type: 'color',
-//     style: `background-color:${carData.color}`,
-//     value: carData.color,
-//   });
-//
-//   const nameInput = Input('Name', {
-//     id: `name-${ID}`,
-//     type: 'text',
-//     placeholder: `${carData.name}`,
-//     value: carData.name,
-//   });
-//
-//   const updateButton = Button('Update');
-//
-//   const modal = createPopup({
-//     children: [colorLabel, colorInput, nameLabel, nameInput, updateButton],
-//   });
-//
-//   colorInput.addEventListener('input', () => (colorInput.style.backgroundColor = colorInput.value));
-//
-//   updateButton.addEventListener('click', () => {
-//     onUpdate({ id: carData.id, color: colorInput.value, name: nameInput.value });
-//     modal.remove();
-//   });
-//
-//   return modal;
-// }
+export function createAddCarModal(onAdd: (data: Omit<GarageDataType, 'id'>) => void) {
+  const ID = 'new';
+  const defaultName = 'New Cat';
+  const defaultColor = '#ef1ba6';
+
+  const colorLabel = Label('Color: ', `color-${ID}`);
+  const nameLabel = Label('Name: ', `name-${ID}`);
+
+  const colorInput = Input('Color', {
+    id: `color-${ID}`,
+    type: 'color',
+    value: defaultColor,
+    style: `background-color:${defaultColor}`,
+  });
+
+  const nameInput = Input('Name', {
+    id: `name-${ID}`,
+    type: 'text',
+    placeholder: defaultName,
+    value: defaultName,
+  });
+
+  const addButton = Button('Add');
+
+  const modal = createPopup({
+    children: [colorLabel, colorInput, nameLabel, nameInput, addButton],
+  });
+
+  colorInput.addEventListener('input', () => (colorInput.style.backgroundColor = colorInput.value));
+
+  addButton.addEventListener('click', () => {
+    const name = nameInput.value.trim();
+    const color = colorInput.value;
+    if (!name) {
+      createErrorModal('Enter cat name');
+    }
+    onAdd({ color: color, name: name });
+    modal.remove();
+  });
+
+  return modal;
+}

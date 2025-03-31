@@ -7,9 +7,9 @@ import { createControlsContainer } from '~/view/garage/garage-controller.ts';
 
 export function createGarageView(cars: GarageDataType[]) {
   const pageName = 'Garage';
-  const controls = Div(createControlsContainer());
+  const container = Div('', { id: 'cars-container' });
+  const controls = Div(createControlsContainer(container), { id: 'controls-container' });
   replaceCssClass(controls, ['flex-col'], ['flex-row', 'flex-wrap']);
-  const container = Div('');
   replaceCssClass(container, [], ['w-full']);
   cars.forEach((car) => {
     container.append(createCarView(car));

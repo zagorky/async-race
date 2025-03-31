@@ -7,7 +7,6 @@ import { Button } from '~/utils/factory.ts';
 export function handleRemoveCar(id: number, container: HTMLElement) {
   deleteCar(id)
     .then(() => {
-      console.log(`car ${id} is deleted`);
       container.remove();
     })
     .catch((error: Error) => createErrorModal(`error in delete ${error.message}`));

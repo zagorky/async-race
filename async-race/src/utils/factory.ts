@@ -131,7 +131,7 @@ export const Ul = (children: Children): HTMLUListElement =>
 export const Li = (children: Children): HTMLLIElement => createElement({ tag: 'li', children });
 
 export const Span = (children: Children): HTMLSpanElement =>
-  createElement({ tag: 'span', children });
+  createElement({ tag: 'span', children, cssClasses: ['capitalize'] });
 
 export const Form = (children: Children): HTMLFormElement =>
   createElement({
