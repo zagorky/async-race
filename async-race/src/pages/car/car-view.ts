@@ -1,7 +1,7 @@
 import type { GarageDataType } from '~/api/garage-api.ts';
 import { Div, Span } from '~/utils/factory.ts';
 import { replaceCssClass } from '~/utils/helpers.ts';
-import { createCarControls, handleRemoveCar, handleUpdateCar } from '~/view/car/car-controller.ts';
+import { createCarControls, handleRemoveCar, handleUpdateCar } from '~/pages/car/car-controller.ts';
 
 export function createCarView(carData: GarageDataType) {
   const { id, color, name } = carData;

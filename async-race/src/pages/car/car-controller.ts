@@ -1,8 +1,9 @@
 import type { GarageDataType } from '~/api/garage-api.ts';
 import { deleteCar, updateCar } from '~/api/garage-api.ts';
-import { createErrorModal, createUpdateCarModal } from '~/view/modals.ts';
-import { createCarView } from '~/view/car/car-view.ts';
+
 import { Button } from '~/utils/factory.ts';
+import { createErrorModal, createUpdateCarModal } from '~/pages/modals.ts';
+import { createCarView } from '~/pages/car/car-view.ts';
 
 export function handleRemoveCar(id: number, container: HTMLElement) {
   deleteCar(id)

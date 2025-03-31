@@ -1,7 +1,8 @@
 import { Button, Cell, H2, Row, Section, Table, TableBody, TableHeader } from '~/utils/factory.ts';
-import { createHeader } from '~/view/header/header.ts';
-import { createCarPicture } from '~/view/car/car-view.ts';
+
 import type { WinnerDetailedDataType } from '~/api/winners-api.ts';
+import { createHeader } from '~/pages/header/header.ts';
+import { createCarPicture } from '~/pages/car/car-view.ts';
 
 export function createWinnersView(winners: WinnerDetailedDataType[]) {
   const pageName = 'Winners';

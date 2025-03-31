@@ -1,6 +1,6 @@
-import { createWinnersModel } from '~/view/winners/winners-model.ts';
-import { createWinnersView } from '~/view/winners/winners-view.ts';
-import { createErrorModal } from '~/view/modals.ts';
+import { createWinnersModel } from '~/pages/winners/winners-model.ts';
+import { createWinnersView } from '~/pages/winners/winners-view.ts';
+import { createErrorModal } from '~/pages/modals.ts';
 
 export async function createWinnersController() {
   try {
