@@ -103,19 +103,3 @@ export function fetchAndValidateData<T>(validator: (data: unknown) => data is T)
       .then(validateData(validator));
   };
 }
-
-// export type ErrorType =
-//   | ResponseError
-//   | JsonError
-//   | ParseDataError
-//   | Error
-//   | 'NetworkError'
-//   | 'UnknownError';
-//
-// export function detectErrorType(error: unknown): ErrorType {
-//   if (error instanceof ResponseError) return error;
-//   if (error instanceof JsonError) return error;
-//   if (error instanceof ParseDataError) return error;
-//   if (error instanceof Error) return error;
-//   return 'UnknownError';
-// }

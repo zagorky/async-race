@@ -1,4 +1,4 @@
-import { fetchAndValidateData, path, requestConfig } from '~/api/new-api-handlers.ts';
+import { baseUrl, fetchAndValidateData, path, requestConfig } from '~/api/new-api-handlers.ts';
 import { hasSome } from '@powwow-js/core';
 
 export type GarageDataType = {
@@ -39,8 +39,17 @@ export const getCar = (id: number) =>
 export const setCar = (data: unknown) =>
   fetchAndValidateData(isGarageData)(path.garage, requestConfig.post(data));
 
-export const deleteCar = (id: number) =>
-  fetchAndValidateData(isSingleGarageData)(`${path.garage}/${id}`, requestConfig.delete);
+// export const deleteCar = (id: number) =>
+//   fetchAndValidateData(isSingleGarageData)(`${path.garage}/${id}`, requestConfig.delete);
 
 export const updateCar = (id: number, data: unknown) =>
   fetchAndValidateData(isSingleGarageData)(`${path.garage}/${id}`, requestConfig.patch(data));
+
+// TODO подумать как переписать функцию fetchAndValidateData
+export const deleteCar = (id: number) =>
+  fetch(`${baseUrl}${path.garage}/${id}`, requestConfig.delete).then((response) => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response;
+  });

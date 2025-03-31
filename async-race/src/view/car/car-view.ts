@@ -1,8 +1,7 @@
 import type { GarageDataType } from '~/api/garage-api.ts';
-import { deleteCar, updateCar } from '~/api/garage-api.ts';
-import { Button, Div, Span } from '~/utils/factory.ts';
+import { Div, Span } from '~/utils/factory.ts';
 import { replaceCssClass } from '~/utils/helpers.ts';
-import { createErrorModal, createUpdateCarModal } from '~/view/modals.ts';
+import { createCarControls, handleRemoveCar, handleUpdateCar } from '~/view/car/car-controller.ts';
 
 export function createCarView(carData: GarageDataType) {
   const { id, color, name } = carData;
@@ -20,6 +19,7 @@ export function createCarView(carData: GarageDataType) {
     (updatedData) => {
       handleUpdateCar(updatedData, container);
     },
+    (id) => handleRemoveCar(id, container),
   );
 
   const controlsContainer = Div([
@@ -57,42 +57,4 @@ export function createCarPicture(color: string) {
   svgContainer.insertAdjacentHTML('beforeend', cat);
 
   return svgContainer;
-}
-
-function createCarControls(carData: GarageDataType, onUpdate: (data: GarageDataType) => void) {
-  const updateCarButton = Button('Update', { id: `update-${carData.id}` });
-  updateCarButton.addEventListener('click', () => {
-    const modal = createUpdateCarModal(carData, (updatedData) => onUpdate(updatedData));
-    document.body.append(modal);
-    modal.showModal();
-  });
-  const removeCarButton = Button('Remove', { id: `remove-${carData.id}` });
-  removeCarButton.addEventListener('click', () => {
-    handleRemoveCar(carData);
-  });
-  const startCarButton = Button('Start', { id: `start-${carData.id}` });
-  const returnCarButton = Button('Return', { id: `return-${carData.id}` });
-  return {
-    updateCarButton,
-    removeCarButton,
-    startCarButton,
-    returnCarButton,
-  };
-}
-
-function handleRemoveCar(carData: GarageDataType) {
-  deleteCar(carData.id)
-    .then(() => {
-      console.log(`car ${carData.id} is deleted`);
-    })
-    .catch((error: Error) => createErrorModal(`error in delete ${error.message}`));
-}
-
-function handleUpdateCar(carData: GarageDataType, container: HTMLElement) {
-  updateCar(carData.id, { color: carData.color, name: carData.name })
-    .then((data) => {
-      const updatedCar = createCarView(data);
-      container.replaceWith(updatedCar);
-    })
-    .catch((error: Error) => createErrorModal(`Error in update ${error.message}`));
 }
