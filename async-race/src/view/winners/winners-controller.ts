@@ -9,5 +9,6 @@ export async function createWinnersController() {
     return createWinnersView(winners);
   } catch {
     createErrorModal(`Failed to load winners`);
+    return createWinnersView([]);
   }
 }
