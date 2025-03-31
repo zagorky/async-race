@@ -15,14 +15,14 @@ const config: RouterConfig = {
     {
       path: '/',
       view: async (): Promise<HTMLElement> => {
-        const module = await import('../src/view/garage/garage-controller.ts');
+        const module = await import('../src/pages/garage/garage-controller.ts');
         return module.createGarageController();
       },
     },
     {
       path: '/winners',
       view: async (): Promise<HTMLElement> => {
-        const module = await import('../src/view/winners/winners-controller.ts');
+        const module = await import('../src/pages/winners/winners-controller.ts');
         return module.createWinnersController();
       },
     },
@@ -47,7 +47,7 @@ export async function router(): Promise<void> {
     match = {
       path: '/*',
       view: async (): Promise<HTMLElement> => {
-        const module = await import('../src/view/error/error.ts');
+        const module = await import('../src/pages/error/error.ts');
         return module.createErrorView();
       },
     };

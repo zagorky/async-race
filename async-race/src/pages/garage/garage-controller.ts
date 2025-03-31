@@ -1,10 +1,12 @@
-import { createGarageModel } from '~/view/garage/garage-model.ts';
-import { createGarageView } from '~/view/garage/garage-view.ts';
 import type { GarageDataType } from '~/api/garage-api.ts';
 import { setCar } from '~/api/garage-api.ts';
-import { createAddCarModal, createErrorModal } from '~/view/modals.ts';
 import { Button } from '~/utils/factory.ts';
-import { createCarView } from '~/view/car/car-view.ts';
+import { createGarageModel } from '~/pages/garage/garage-model.ts';
+import { createGarageView } from '~/pages/garage/garage-view.ts';
+import { createAddCarModal, createErrorModal } from '~/pages/modals.ts';
+import { createCarView } from '~/pages/car/car-view.ts';
+import { carBrands, carModels } from '~/pages/garage/data-for-generation.ts';
+import { getRandomColor } from '~/utils/random-function.ts';
 
 export async function createGarageController() {
   try {
@@ -31,6 +33,8 @@ export function createControlsContainer(container: HTMLElement) {
     modal.showModal();
   });
 
+  generateCarsButton.addEventListener('click', () => handleGenerateCars(container));
+
   return [
     addCarButton,
     startRaceButton,
@@ -48,4 +52,30 @@ export function handleAddCar(data: Omit<GarageDataType, 'id'>, container: HTMLEl
       container.append(newCar);
     })
     .catch((error: Error) => createErrorModal(`Error in adding car: ${error.message}`));
+}
+
+export function handleGenerateCars(container: HTMLElement) {
+  const randomCars = generateRandomCars();
+  Promise.all(randomCars.map((car) => setCar(car)))
+    .then((createdCars) => {
+      createdCars.forEach((car) => {
+        const newCar = createCarView(car);
+        container.append(newCar);
+      });
+    })
+    .catch((error: Error) => createErrorModal(`Error in generating car: ${error.message}`));
+}
+
+function generateRandomCars() {
+  const numberOfNewCars = 100;
+  const cars = [];
+  for (let i = 0; i < numberOfNewCars; i += 1) {
+    const brand = carBrands[Math.floor(Math.random() * carBrands.length)];
+    const model = carModels[Math.floor(Math.random() * carModels.length)];
+    cars.push({
+      name: `${brand} ${model}`,
+      color: getRandomColor(),
+    });
+  }
+  return cars;
 }

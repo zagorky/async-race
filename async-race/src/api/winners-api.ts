@@ -1,7 +1,7 @@
 import { getCars } from '~/api/garage-api.ts';
 import { fetchAndValidateData, path, requestConfig } from '~/api/new-api-handlers.ts';
 import { hasSome } from '@powwow-js/core';
-import { createErrorModal } from '~/view/modals.ts';
+import { createErrorModal } from '~/pages/modals.ts';
 
 export type WinnersDataType = {
   id: number;
