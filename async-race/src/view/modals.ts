@@ -65,7 +65,6 @@ export function createAddCarModal(onAdd: (data: Omit<GarageDataType, 'id'>) => v
     id: `name-${ID}`,
     type: 'text',
     placeholder: defaultName,
-    value: defaultName,
   });
 
   const addButton = Button('Add');
