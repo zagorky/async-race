@@ -79,11 +79,12 @@ export function createAddCarModal(onAdd: (data: Omit<GarageDataType, 'id'>) => v
   addButton.addEventListener('click', () => {
     const name = nameInput.value.trim();
     const color = colorInput.value;
-    if (!name) {
+    if (name) {
+      onAdd({ color: color, name: name });
+      modal.remove();
+    } else {
       createErrorModal('Enter cat name');
     }
-    onAdd({ color: color, name: name });
-    modal.remove();
   });
 
   return modal;
