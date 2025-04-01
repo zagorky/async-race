@@ -29,7 +29,7 @@ export function createControlsContainer(container: HTMLElement, model: GarageMod
   const nextPageButton = Button('Next page');
 
   addCarButton.addEventListener('click', () => {
-    const modal = createAddCarModal((data) => handleAddCar(data, container));
+    const modal = createAddCarModal((data) => handleAddCar(data, container, model));
     document.body.append(modal);
     modal.showModal();
   });
@@ -47,9 +47,25 @@ export function createControlsContainer(container: HTMLElement, model: GarageMod
   ];
 }
 
-export function handleAddCar(data: Omit<GarageDataType, 'id'>, container: HTMLElement) {
-  setCar(data)
-    .then(({ data: createdData }) => updateCarView(container, [createdData]))
+export function handleAddCar(
+  data: Omit<GarageDataType, 'id'>,
+  container: HTMLElement,
+  model: GarageModelType,
+) {
+  model
+    .addCar(data)
+    .then((lastPage) => {
+      if (model.getCurrentPage() === lastPage) {
+        return model.getCars(lastPage);
+      }
+      return [];
+    })
+    .then((cars) => {
+      if (cars.length > 0) {
+        container.replaceChildren();
+        updateCarView(container, cars);
+      }
+    })
     .catch((error: Error) => createErrorModal(`Error in adding car: ${error.message}`));
 }
 

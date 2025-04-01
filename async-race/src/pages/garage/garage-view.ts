@@ -13,5 +13,12 @@ export function createGarageView(cars: GarageDataType[], model: GarageModelType)
   replaceCssClass(container, [], ['w-full']);
   updateCarView(container, cars);
 
+  // const paginationInfo = Div(
+  //   [Span(`${model.getCurrentPage()}/${model.getTotalPages()} (${model.getTotalCars()})`)],
+  //   {
+  //     id: 'pagination-info',
+  //   },
+  // );
+
   return Section([createHeader(), H2(pageName), controls, container]);
 }
