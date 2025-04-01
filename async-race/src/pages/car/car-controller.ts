@@ -1,41 +1,56 @@
 import type { GarageDataType } from '~/api/garage-api.ts';
-import { deleteCar, updateCar } from '~/api/garage-api.ts';
-
-import { Button } from '~/utils/factory.ts';
+import { Button, Div } from '~/utils/factory.ts';
 import { createErrorModal, createUpdateCarModal } from '~/pages/modals.ts';
 import { createCarView } from '~/pages/car/car-view.ts';
+import type { CarModelType } from '~/pages/car/car-model.ts';
+import { createCarModel } from '~/pages/car/car-model.ts';
+import { replaceCssClass } from '~/utils/helpers.ts';
 
-export function handleRemoveCar(id: number, container: HTMLElement) {
-  deleteCar(id)
-    .then(() => {
-      container.remove();
-    })
-    .catch((error: Error) => createErrorModal(`error in delete ${error.message}`));
+export function createCarController(carData: GarageDataType) {
+  const model = createCarModel();
+  const view = createCarView(carData);
+
+  const { updateCarButton, removeCarButton, startCarButton, returnCarButton } = createCarControls(
+    carData,
+    model,
+    view,
+  );
+
+  const controlsContainer = Div([
+    updateCarButton,
+    removeCarButton,
+    startCarButton,
+    returnCarButton,
+  ]);
+
+  replaceCssClass(controlsContainer, ['flex-col'], ['flex-row']);
+  controlsContainer.append(updateCarButton, removeCarButton, startCarButton, returnCarButton);
+  view.prepend(controlsContainer);
+  return view;
 }
 
-export function handleUpdateCar(carData: GarageDataType, container: HTMLElement) {
-  updateCar(carData.id, { color: carData.color, name: carData.name })
-    .then(({ data: data }) => {
-      const updatedCar = createCarView(data);
-      container.replaceWith(updatedCar);
-    })
-    .catch((error: Error) => createErrorModal(`Error in update ${error.message}`));
-}
-
-export function createCarControls(
-  carData: GarageDataType,
-  onUpdate: (data: GarageDataType) => void,
-  onDelete: (id: number) => void,
-) {
+export function createCarControls(carData: GarageDataType, model: CarModelType, view: HTMLElement) {
   const updateCarButton = Button('Update', { id: `update-${carData.id}` });
   updateCarButton.addEventListener('click', () => {
-    const modal = createUpdateCarModal(carData, (updatedData) => onUpdate(updatedData));
+    const modal = createUpdateCarModal(carData, (updatedData) => {
+      return model
+        .updateCar(updatedData)
+        .then((data) => {
+          const updatedCar = createCarController(data);
+          view.replaceWith(updatedCar);
+        })
+        .catch((error: Error) => createErrorModal(`Error in update ${error.message}`));
+    });
+
     document.body.append(modal);
     modal.showModal();
   });
   const removeCarButton = Button('Remove', { id: `remove-${carData.id}` });
   removeCarButton.addEventListener('click', () => {
-    onDelete(carData.id);
+    model
+      .removeCar(carData.id)
+      .then(() => view.remove())
+      .catch((error: Error) => createErrorModal(`error in delete ${error.message}`));
   });
   const startCarButton = Button('Start', { id: `start-${carData.id}` });
   startCarButton.addEventListener('click', () => {

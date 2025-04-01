@@ -1,7 +1,6 @@
 import type { GarageDataType } from '~/api/garage-api.ts';
 import { Div, Span } from '~/utils/factory.ts';
 import { replaceCssClass } from '~/utils/helpers.ts';
-import { createCarControls, handleRemoveCar, handleUpdateCar } from '~/pages/car/car-controller.ts';
 
 export function createCarView(carData: GarageDataType) {
   const { id, color, name } = carData;
@@ -13,24 +12,7 @@ export function createCarView(carData: GarageDataType) {
     ['justify-start', 'items-start', 'w-full'],
   );
   const svgContainer = createCarPicture(color);
-
-  const { updateCarButton, removeCarButton, startCarButton, returnCarButton } = createCarControls(
-    carData,
-    (updatedData) => {
-      handleUpdateCar(updatedData, container);
-    },
-    (id) => handleRemoveCar(id, container),
-  );
-
-  const controlsContainer = Div([
-    updateCarButton,
-    removeCarButton,
-    startCarButton,
-    returnCarButton,
-  ]);
-
-  replaceCssClass(controlsContainer, ['flex-col'], ['flex-row']);
-  container.append(controlsContainer, carName, svgContainer);
+  container.append(carName, svgContainer);
   return container;
 }
 

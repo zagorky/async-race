@@ -10,7 +10,7 @@ export function createErrorModal(message: string) {
 
 export function createUpdateCarModal(
   carData: GarageDataType,
-  onUpdate: (data: GarageDataType) => void,
+  onUpdate: (data: GarageDataType) => Promise<void>,
 ) {
   const ID = carData.id;
   const colorLabel = Label('Color: ', `color-${ID}`);
@@ -39,7 +39,9 @@ export function createUpdateCarModal(
   colorInput.addEventListener('input', () => (colorInput.style.backgroundColor = colorInput.value));
 
   updateButton.addEventListener('click', () => {
-    onUpdate({ id: carData.id, color: colorInput.value, name: nameInput.value });
+    onUpdate({ id: carData.id, color: colorInput.value, name: nameInput.value }).catch((error) => {
+      createErrorModal(`Update failed: ${error instanceof Error ? error.message : String(error)}`);
+    });
     modal.remove();
   });
 

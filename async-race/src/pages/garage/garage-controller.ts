@@ -5,9 +5,9 @@ import type { GarageModelType } from '~/pages/garage/garage-model.ts';
 import { createGarageModel } from '~/pages/garage/garage-model.ts';
 import { createGarageView } from '~/pages/garage/garage-view.ts';
 import { createAddCarModal, createErrorModal } from '~/pages/modals.ts';
-import { createCarView } from '~/pages/car/car-view.ts';
 import { carBrands, carModels } from '~/pages/garage/data-for-generation.ts';
 import { getRandomColor } from '~/utils/random-function.ts';
+import { createCarController } from '~/pages/car/car-controller.ts';
 
 export async function createGarageController() {
   try {
@@ -94,7 +94,7 @@ function generateRandomCars() {
 }
 
 export function updateCarView(container: HTMLElement, cars: GarageDataType[]) {
-  cars.forEach((car) => container.append(createCarView(car)));
+  cars.forEach((car) => container.append(createCarController(car)));
 }
 
 function handlePagination(
