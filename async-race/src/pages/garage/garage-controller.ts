@@ -33,7 +33,7 @@ export function createControlsContainer(container: HTMLElement, model: GarageMod
     document.body.append(modal);
     modal.showModal();
   });
-  generateCarsButton.addEventListener('click', () => handleGenerateCars(container));
+  generateCarsButton.addEventListener('click', () => handleGenerateCars(container, model));
   previousPageButton.addEventListener('click', () => handlePagination('prev', container, model));
   nextPageButton.addEventListener('click', () => handlePagination('next', container, model));
 
@@ -52,35 +52,16 @@ export function handleAddCar(
   container: HTMLElement,
   model: GarageModelType,
 ) {
-  model
-    .addCar(data)
-    .then((lastPage) => {
-      if (model.getCurrentPage() === lastPage) {
-        return model.getCars(lastPage);
-      }
-      return [];
-    })
-    .then((cars) => {
-      if (cars.length > 0) {
-        container.replaceChildren();
-        updateCarView(container, cars);
-      }
-    })
-    .catch((error: Error) => createErrorModal(`Error in adding car: ${error.message}`));
+  addCarsAndUpdateView([data], container, model);
 }
 
-export function handleGenerateCars(container: HTMLElement) {
+export function handleGenerateCars(container: HTMLElement, model: GarageModelType) {
   const randomCars = generateRandomCars();
-  Promise.all(randomCars.map((car) => setCar(car)))
-    .then((response) => {
-      const createdCars = response.map(({ data }) => data);
-      updateCarView(container, createdCars);
-    })
-    .catch((error: Error) => createErrorModal(`Error in generating car: ${error.message}`));
+  addCarsAndUpdateView(randomCars, container, model);
 }
 
 function generateRandomCars() {
-  const numberOfNewCars = 100;
+  const numberOfNewCars = 10; // TODO не забудь исправить на 100
   const cars = [];
   for (let i = 0; i < numberOfNewCars; i += 1) {
     const brand = carBrands[Math.floor(Math.random() * carBrands.length)];
@@ -114,4 +95,18 @@ function handlePagination(
       updateCarView(container, cars);
     })
     .catch((error: Error) => createErrorModal(`${error.toString()}`));
+}
+
+function addCarsAndUpdateView(
+  cars: Omit<GarageDataType, 'id'>[],
+  container: HTMLElement,
+  model: GarageModelType,
+) {
+  Promise.all(cars.map((car) => setCar(car)))
+    .then(() => model.getCars(model.getCurrentPage()))
+    .then((updatedCars) => {
+      container.replaceChildren();
+      updateCarView(container, updatedCars);
+    })
+    .catch((error: Error) => createErrorModal(`Error in processing cars: ${error.message}`));
 }
