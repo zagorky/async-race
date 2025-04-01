@@ -15,7 +15,7 @@ export function handleRemoveCar(id: number, container: HTMLElement) {
 
 export function handleUpdateCar(carData: GarageDataType, container: HTMLElement) {
   updateCar(carData.id, { color: carData.color, name: carData.name })
-    .then((data) => {
+    .then(({ data: data }) => {
       const updatedCar = createCarView(data);
       container.replaceWith(updatedCar);
     })

@@ -99,7 +99,13 @@ export function fetchAndValidateData<T>(validator: (data: unknown) => data is T)
   return (endpoint: string, options?: RequestInit) => {
     return fetch(`${baseUrl}${endpoint}`, options)
       .then(processResponse)
-      .then(toJSON)
-      .then(validateData(validator));
+      .then(async (response) => {
+        const data = await toJSON(response);
+        const totalCount = response.headers.get('X-Total-Count');
+        return {
+          data: validateData(validator)(data),
+          totalCount: totalCount ? Number.parseInt(totalCount, 10) : undefined,
+        };
+      });
   };
 }

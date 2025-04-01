@@ -35,7 +35,9 @@ export function isWinnersDetailedData(data: unknown): data is WinnerDetailedData
 export async function getDetailedData() {
   console.log('Fetching winners data...');
 
-  const [garage, winners] = await Promise.all([getCars(), getWinners()]);
+  const [garageResponse, winnersResponse] = await Promise.all([getCars(), getWinners()]);
+  const garage = garageResponse.data;
+  const winners = winnersResponse.data;
 
   const validData = winners
     .map((winner) => {

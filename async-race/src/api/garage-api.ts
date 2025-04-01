@@ -7,6 +7,11 @@ export type GarageDataType = {
   id: number;
 };
 
+type PaginatedResponse = {
+  data: GarageDataType[];
+  totalCount?: number;
+};
+
 export function isGarageData(data: unknown): data is GarageDataType[] {
   return (
     Array.isArray(data) &&
@@ -31,10 +36,11 @@ export function isSingleGarageData(data: unknown): data is GarageDataType {
   );
 }
 
-export const getCars = () => fetchAndValidateData(isGarageData)(path.garage, requestConfig.get);
+export const getCars = (page = 1): Promise<PaginatedResponse> =>
+  fetchAndValidateData(isGarageData)(`${path.garage}?_page=${page}&_limit=7`, requestConfig.get);
 
-export const getCar = (id: number) =>
-  fetchAndValidateData(isSingleGarageData)(`${path.garage}/${id}`, requestConfig.get);
+// export const getCar = (id: number) =>
+//   fetchAndValidateData(isSingleGarageData)(`${path.garage}/${id}`, requestConfig.get);
 
 export const setCar = (data: unknown) =>
   fetchAndValidateData(isSingleGarageData)(path.garage, requestConfig.post(data));
