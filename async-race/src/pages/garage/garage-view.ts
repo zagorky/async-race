@@ -5,20 +5,20 @@ import { createControlsContainer, updateCarView } from '~/pages/garage/garage-co
 import { createHeader } from '~/pages/header/header.ts';
 import type { GarageModelType } from '~/pages/garage/garage-model.ts';
 
-export function createGarageView(cars: GarageDataType[], model: GarageModelType) {
+export function createGarageView(
+  cars: GarageDataType[],
+  model: GarageModelType,
+  onUpdate: () => void,
+) {
   const pageName = 'Garage';
   const container = Div('', { id: 'cars-container' });
-  const controls = Div(createControlsContainer(container, model), { id: 'controls-container' });
+
+  const controls = Div(createControlsContainer(container, model, onUpdate), {
+    id: 'controls-container',
+  });
+
   replaceCssClass(controls, ['flex-col'], ['flex-row', 'flex-wrap']);
   replaceCssClass(container, [], ['w-full']);
   updateCarView(container, cars);
-
-  // const paginationInfo = Div(
-  //   [Span(`${model.getCurrentPage()}/${model.getTotalPages()} (${model.getTotalCars()})`)],
-  //   {
-  //     id: 'pagination-info',
-  //   },
-  // );
-
   return Section([createHeader(), H2(pageName), controls, container]);
 }
