@@ -67,3 +67,19 @@ export function createCarControls(carData: GarageDataType, model: CarModelType, 
     returnCarButton,
   };
 }
+
+function animateCar(carElement: HTMLElement, duration: number) {
+  carElement.style.transform = `translateX(calc(100%-${carElement.offsetWidth}px)`;
+  carElement.style.transition = `transform ${duration}ms linear`;
+}
+
+function resetCarPosition(carElement: HTMLElement) {
+  carElement.style.transform = `none`;
+  carElement.style.transition = 'translateX(0)';
+}
+
+function calculateAnimationDuration(velocity: number, distance: number) {
+  return distance / velocity;
+}
+
+console.log(animateCar, resetCarPosition, calculateAnimationDuration);

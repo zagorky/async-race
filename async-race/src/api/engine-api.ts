@@ -1,18 +1,37 @@
-import { getData, path } from '~/api/api-handlers.ts';
+import { path, requestConfig } from '~/api/new-api-handlers.ts';
 
-// type EngineDataType = {
-//   velocity: number;
-//   distance: number;
-// };
+export type EngineDataType = {
+  velocity: number;
+  distance: number;
+};
 
-// type EngineStatusType = 'started' | 'stopped' | 'drive';
+export type EngineStatusType = 'started' | 'stopped' | 'drive';
 
-// type EngineMode = Record<'success', boolean>;
+export type EngineMode = Record<'success', boolean>;
 
-// const startEngine = async () => {};
-//
-// const stopEngine = async () => {};
-//
-// const switchEngineMode = async () => {};
+export const startEngine = (id: number) =>
+  fetch(`${path.engine}?id=${id}&status=started`, requestConfig.patch(null)).then((response) => {
+    if (!response.ok) {
+      throw new Error(`Engine start failed: ${response.status}`);
+    }
+    return response.json();
+  });
 
-console.log(await getData<unknown>(`${path.engine}?id=1&status=drive`));
+export const stopEngine = (id: number) =>
+  fetch(`${path.engine}?id=${id}&status=stopped`, requestConfig.patch(null)).then((response) => {
+    if (!response.ok) {
+      throw new Error(`Engine stop failed: ${response.status}`);
+    }
+  });
+
+export const switchEngineMode = (id: number) =>
+  fetch(`${path.engine}?id=${id}&status=drive`, requestConfig.patch(null)).then((response) => {
+    if (!response.ok) {
+      const brokenCarStatus = 500;
+      if (response.status === brokenCarStatus) {
+        throw new Error('Engine broken down!');
+      }
+      throw new Error(`Drive mode failed: ${response.status}`);
+    }
+    return response.json();
+  });
