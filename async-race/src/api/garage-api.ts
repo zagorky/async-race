@@ -39,6 +39,8 @@ export function isSingleGarageData(data: unknown): data is GarageDataType {
 export const getCars = (page = 1): Promise<PaginatedResponse> =>
   fetchAndValidateData(isGarageData)(`${path.garage}?_page=${page}&_limit=7`, requestConfig.get);
 
+export const getAllCars = (): Promise<PaginatedResponse> =>
+  fetchAndValidateData(isGarageData)(`${path.garage}`, requestConfig.get);
 // export const getCar = (id: number) =>
 //   fetchAndValidateData(isSingleGarageData)(`${path.garage}/${id}`, requestConfig.get);
 

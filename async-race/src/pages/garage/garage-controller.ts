@@ -8,11 +8,12 @@ import { createAddCarModal, createErrorModal } from '~/pages/modals.ts';
 import { carBrands, carModels } from '~/pages/garage/data-for-generation.ts';
 import { getRandomColor } from '~/utils/random-function.ts';
 import { createCarController } from '~/pages/car/car-controller.ts';
+import { createPaginationButtons } from '~/pages/pagination/pagination.ts';
 
 export async function createGarageController() {
   try {
     const model = createGarageModel();
-    const cars = await model.getCars();
+    const cars = await model.getCars(model.getCurrentPage());
     const { element: paginationInfo, update: updatePagination } = createPaginationInfo(model);
 
     const view = createGarageView(cars, model, updatePagination);
@@ -20,8 +21,9 @@ export async function createGarageController() {
     view.prepend(paginationInfo);
     return view;
   } catch (error) {
-    createErrorModal(`Error in loading data`);
-    throw error;
+    createErrorModal(
+      `Failed to load cats ${error instanceof Error ? error.message : String(error)}`,
+    );
   }
 }
 
@@ -34,8 +36,7 @@ export function createControlsContainer(
   const startRaceButton = Button('Start Race');
   const resetRaceButton = Button('Reset Race');
   const generateCarsButton = Button('Generate Cats');
-  const previousPageButton = Button('Prev page');
-  const nextPageButton = Button('Next page');
+  const [previousPageButton, nextPageButton] = createPaginationButtons(container, model, onUpdate);
 
   addCarButton.addEventListener('click', () => {
     const modal = createAddCarModal((data) => handleAddCar(data, container, model, onUpdate));
@@ -44,14 +45,6 @@ export function createControlsContainer(
   });
   generateCarsButton.addEventListener('click', () => {
     handleGenerateCars(container, model, onUpdate);
-  });
-  previousPageButton.addEventListener('click', () => {
-    handlePagination('prev', container, model);
-    onUpdate();
-  });
-  nextPageButton.addEventListener('click', () => {
-    handlePagination('next', container, model);
-    onUpdate();
   });
 
   return [
@@ -98,25 +91,6 @@ function generateRandomCars() {
 
 export function updateCarView(container: HTMLElement, cars: GarageDataType[]) {
   cars.forEach((car) => container.append(createCarController(car)));
-}
-
-function handlePagination(
-  direction: 'prev' | 'next',
-  container: HTMLElement,
-  model: GarageModelType,
-) {
-  const currentPage = model.getCurrentPage();
-  const totalPages = model.getTotalPages();
-
-  const newPage = direction === 'prev' ? currentPage - 1 : currentPage + 1;
-  if (newPage < 1 || (direction === 'next' && newPage > totalPages)) return;
-  model
-    .getCars(newPage)
-    .then((cars) => {
-      container.replaceChildren();
-      updateCarView(container, cars);
-    })
-    .catch((error: Error) => createErrorModal(`${error.toString()}`));
 }
 
 function addCarsAndUpdateView(

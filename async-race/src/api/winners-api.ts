@@ -1,7 +1,6 @@
-import { getCars } from '~/api/garage-api.ts';
+import { getAllCars } from '~/api/garage-api.ts';
 import { fetchAndValidateData, path, requestConfig } from '~/api/new-api-handlers.ts';
 import { hasSome } from '@powwow-js/core';
-import { createErrorModal } from '~/pages/modals.ts';
 
 export type WinnersDataType = {
   id: number;
@@ -33,9 +32,7 @@ export function isWinnersDetailedData(data: unknown): data is WinnerDetailedData
 }
 
 export async function getDetailedData() {
-  console.log('Fetching winners data...');
-
-  const [garageResponse, winnersResponse] = await Promise.all([getCars(), getWinners()]);
+  const [garageResponse, winnersResponse] = await Promise.all([getAllCars(), getWinners()]);
   const garage = garageResponse.data;
   const winners = winnersResponse.data;
 
@@ -54,10 +51,6 @@ export async function getDetailedData() {
     })
     .filter((winner): winner is WinnerDetailedDataType => winner !== null);
 
-  if (validData.length === 0) {
-    createErrorModal('No winners with matching cars found');
-    return [];
-  }
   return validData;
 }
 
@@ -76,4 +69,4 @@ export function isWinnersData(data: unknown): data is WinnersDataType[] {
 }
 
 export const getWinners = () =>
-  fetchAndValidateData(isWinnersData)(path.winners, requestConfig.get);
+  fetchAndValidateData(isWinnersData)(`${path.winners}`, requestConfig.get);
