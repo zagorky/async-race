@@ -9,6 +9,7 @@ import { createWinnersTable } from '~/pages/winners/winners-view.ts';
 import type { GarageDataType } from '~/api/garage-api.ts';
 import type { WinnersDataType } from '~/api/winners-api.ts';
 
+//TODO вообще переписать, надо соединить с роутером
 type PaginationModelType = {
   getCurrentPage: () => number;
   getTotalPages: () => number;
