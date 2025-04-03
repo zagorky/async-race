@@ -72,8 +72,6 @@ export function createCarControls(carData: GarageDataType, model: CarModelType, 
     if (hasSome(animationState)) {
       animationState.isBroken = false;
       carElement.style.border = '';
-      carElement.style.animation = '';
-
       setButtonsState(buttons, true);
 
       model
@@ -84,7 +82,7 @@ export function createCarControls(carData: GarageDataType, model: CarModelType, 
 
           return model.driveCar(carData.id).then((result) => {
             if (!result.success) {
-              handleCarBreakdown(carElement); // Обработка поломки
+              handleCarBreakdown(carElement);
             }
           });
         })
