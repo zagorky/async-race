@@ -6,7 +6,14 @@ import { createCarView } from '~/pages/car/car-view.ts';
 import type { CarModelType } from '~/pages/car/car-model.ts';
 import { createCarModel } from '~/pages/car/car-model.ts';
 import { replaceCssClass } from '~/utils/helpers.ts';
-import { assertIsInstanceOf } from '@powwow-js/core';
+import {
+  animateCar,
+  calculateAnimationDuration,
+  carAnimations,
+  handleCarBreakdown,
+  resetCarPosition,
+} from '~/pages/animation/animation.ts';
+import { hasSome } from '@powwow-js/core';
 
 export function createCarController(carData: GarageDataType) {
   const model = createCarModel();
@@ -34,7 +41,11 @@ export function createCarController(carData: GarageDataType) {
 export function createCarControls(carData: GarageDataType, model: CarModelType, view: CarViewType) {
   const buttons = createButtons(carData.id);
   const carElement = view.svgContainer;
-  assertIsInstanceOf(HTMLElement, carElement);
+  carAnimations.set(carElement, {
+    frameId: null,
+    isBroken: false,
+    currentPosition: 0,
+  });
 
   buttons.updateCarButton.addEventListener('click', () => {
     const modal = createUpdateCarModal(carData, (updatedData) => {
@@ -57,38 +68,35 @@ export function createCarControls(carData: GarageDataType, model: CarModelType, 
       .catch((error: Error) => createErrorModal(`error in delete ${error.message}`));
   });
   buttons.startCarButton.addEventListener('click', () => {
-    model
-      .startCar(carData.id)
-      .then((data) => {
-        const duration = calculateAnimationDuration(data.velocity, data.distance);
-        animateCar(carElement, duration);
+    const animationState = carAnimations.get(carElement);
+    if (hasSome(animationState)) {
+      animationState.isBroken = false;
+      carElement.style.border = '';
+      carElement.style.animation = '';
 
-        return model.driveCar(carData.id).then((result) => {
-          if (!result.success) {
-            carElement.style.border = '3px solid red';
-            carElement.style.animation = 'blink 0.5s infinite alternate';
-            carElement.style.transform = `translateX(0)`;
-          }
-        });
-      })
-      .catch((error) => console.warn(`${error instanceof Error ? error.message : String(error)}`));
+      setButtonsState(buttons, true);
+
+      model
+        .startCar(carData.id)
+        .then((data) => {
+          const duration = calculateAnimationDuration(data.velocity, data.distance);
+          animateCar(carElement, duration);
+
+          return model.driveCar(carData.id).then((result) => {
+            if (!result.success) {
+              handleCarBreakdown(carElement); // Обработка поломки
+            }
+          });
+        })
+
+        .catch(() => handleCarBreakdown(carElement));
+    }
   });
-  buttons.returnCarButton.addEventListener('click', () => resetCarPosition(carElement));
+  buttons.returnCarButton.addEventListener('click', () => {
+    resetCarPosition(carElement);
+    setButtonsState(buttons, false);
+  });
   return buttons;
-}
-
-function animateCar(carElement: HTMLElement, duration: number) {
-  carElement.style.transform = `translateX(${window.innerWidth - carElement.offsetWidth}px)`;
-  carElement.style.transition = `transform ${duration}ms linear`;
-}
-
-function resetCarPosition(carElement: HTMLElement) {
-  carElement.style.transform = `none`;
-  carElement.style.transition = 'translateX(0)';
-}
-
-function calculateAnimationDuration(velocity: number, distance: number) {
-  return distance / velocity;
 }
 
 function createButtons(id: number) {
@@ -96,6 +104,13 @@ function createButtons(id: number) {
     updateCarButton: Button('Update', { id: `update-${id}` }),
     removeCarButton: Button('Remove', { id: `remove-${id}` }),
     startCarButton: Button('Start', { id: `start-${id}` }),
-    returnCarButton: Button('Return', { id: `return-${id}`, disabled: 'true' }),
+    returnCarButton: Button('Return', { id: `return-${id}` }),
   };
 }
+
+const setButtonsState = (buttons: ReturnType<typeof createButtons>, disabled: boolean) => {
+  buttons.startCarButton.disabled = disabled;
+  buttons.updateCarButton.disabled = disabled;
+  buttons.removeCarButton.disabled = disabled;
+  buttons.returnCarButton.disabled = !disabled;
+};
