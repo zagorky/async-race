@@ -1,19 +1,22 @@
 import type { GarageDataType } from '~/api/garage-api.ts';
 import { Button, Div } from '~/utils/factory.ts';
 import { createErrorModal, createUpdateCarModal } from '~/pages/modals.ts';
+import type { CarViewType } from '~/pages/car/car-view.ts';
 import { createCarView } from '~/pages/car/car-view.ts';
 import type { CarModelType } from '~/pages/car/car-model.ts';
 import { createCarModel } from '~/pages/car/car-model.ts';
 import { replaceCssClass } from '~/utils/helpers.ts';
+import { assertIsInstanceOf } from '@powwow-js/core';
 
 export function createCarController(carData: GarageDataType) {
   const model = createCarModel();
-  const view = createCarView(carData);
+  const viewElements = createCarView(carData);
+  const view = viewElements.container;
 
   const { updateCarButton, removeCarButton, startCarButton, returnCarButton } = createCarControls(
     carData,
     model,
-    view,
+    viewElements,
   );
 
   const controlsContainer = Div([
@@ -24,20 +27,22 @@ export function createCarController(carData: GarageDataType) {
   ]);
 
   replaceCssClass(controlsContainer, ['flex-col'], ['flex-row']);
-  controlsContainer.append(updateCarButton, removeCarButton, startCarButton, returnCarButton);
   view.prepend(controlsContainer);
   return view;
 }
 
-export function createCarControls(carData: GarageDataType, model: CarModelType, view: HTMLElement) {
-  const updateCarButton = Button('Update', { id: `update-${carData.id}` });
-  updateCarButton.addEventListener('click', () => {
+export function createCarControls(carData: GarageDataType, model: CarModelType, view: CarViewType) {
+  const buttons = createButtons(carData.id);
+  const carElement = view.svgContainer;
+  assertIsInstanceOf(HTMLElement, carElement);
+
+  buttons.updateCarButton.addEventListener('click', () => {
     const modal = createUpdateCarModal(carData, (updatedData) => {
       return model
         .updateCar(updatedData)
         .then((data) => {
           const updatedCar = createCarController(data);
-          view.replaceWith(updatedCar);
+          view.container.replaceWith(updatedCar);
         })
         .catch((error: Error) => createErrorModal(`Error in update ${error.message}`));
     });
@@ -45,32 +50,35 @@ export function createCarControls(carData: GarageDataType, model: CarModelType, 
     document.body.append(modal);
     modal.showModal();
   });
-  const removeCarButton = Button('Remove', { id: `remove-${carData.id}` });
-  removeCarButton.addEventListener('click', () => {
+  buttons.removeCarButton.addEventListener('click', () => {
     model
       .removeCar(carData.id)
-      .then(() => view.remove())
+      .then(() => view.container.remove())
       .catch((error: Error) => createErrorModal(`error in delete ${error.message}`));
   });
-  const startCarButton = Button('Start', { id: `start-${carData.id}` });
-  startCarButton.addEventListener('click', () => {
-    // onStart
-  });
-  const returnCarButton = Button('Return', { id: `return-${carData.id}` });
+  buttons.startCarButton.addEventListener('click', () => {
+    model
+      .startCar(carData.id)
+      .then((data) => {
+        const duration = calculateAnimationDuration(data.velocity, data.distance);
+        animateCar(carElement, duration);
 
-  returnCarButton.addEventListener('click', () => {
-    //onReturn
+        return model.driveCar(carData.id).then((result) => {
+          if (!result.success) {
+            carElement.style.border = '3px solid red';
+            carElement.style.animation = 'blink 0.5s infinite alternate';
+            carElement.style.transform = `translateX(0)`;
+          }
+        });
+      })
+      .catch((error) => console.warn(`${error instanceof Error ? error.message : String(error)}`));
   });
-  return {
-    updateCarButton,
-    removeCarButton,
-    startCarButton,
-    returnCarButton,
-  };
+  buttons.returnCarButton.addEventListener('click', () => resetCarPosition(carElement));
+  return buttons;
 }
 
 function animateCar(carElement: HTMLElement, duration: number) {
-  carElement.style.transform = `translateX(calc(100%-${carElement.offsetWidth}px)`;
+  carElement.style.transform = `translateX(${window.innerWidth - carElement.offsetWidth}px)`;
   carElement.style.transition = `transform ${duration}ms linear`;
 }
 
@@ -83,4 +91,11 @@ function calculateAnimationDuration(velocity: number, distance: number) {
   return distance / velocity;
 }
 
-console.log(animateCar, resetCarPosition, calculateAnimationDuration);
+function createButtons(id: number) {
+  return {
+    updateCarButton: Button('Update', { id: `update-${id}` }),
+    removeCarButton: Button('Remove', { id: `remove-${id}` }),
+    startCarButton: Button('Start', { id: `start-${id}` }),
+    returnCarButton: Button('Return', { id: `return-${id}`, disabled: 'true' }),
+  };
+}

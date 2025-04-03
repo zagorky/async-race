@@ -2,34 +2,40 @@ import type { GarageDataType } from '~/api/garage-api.ts';
 import { Div, Span } from '~/utils/factory.ts';
 import { replaceCssClass } from '~/utils/helpers.ts';
 
-export function createCarView(carData: GarageDataType) {
+export type CarViewType = {
+  container: HTMLDivElement;
+  carName: HTMLSpanElement;
+  svgContainer: HTMLDivElement;
+  track: HTMLDivElement;
+};
+
+export function createCarView(carData: GarageDataType): CarViewType {
   const { id, color, name } = carData;
   const carName = Span(name);
   const container = Div('', { id: `car-${id}-container` });
+  const svgContainer = createCarPicture(color, id);
+  const track = Div(svgContainer, { id: `track-${id}` });
   replaceCssClass(
     container,
     ['justify-center', 'items-center'],
     ['justify-start', 'items-start', 'w-full', 'mb-5'],
   );
-  const svgContainer = createCarPicture(color, id);
-  const track = Div(svgContainer, { id: 'track' });
   replaceCssClass(
     track,
     [],
     ['relative', 'h-15', 'w-full', 'border-b-2', 'border-dashed', 'border-rose-300', 'mt-2'],
   );
-
-  container.append(carName, track);
-  return container;
-}
-
-export function createCarPicture(color: string, id: number) {
-  const svgContainer = Div('', { id: `svg-container-${id}` });
   replaceCssClass(
     svgContainer,
     [],
     ['absolute', 'left-0', 'transition-transform', 'duration-100', 'will-change-transform', 'w-18'],
   );
+  container.append(carName, track);
+  return { container, carName, svgContainer, track };
+}
+
+export function createCarPicture(color: string, id: number) {
+  const svgContainer = Div('', { id: `svg-container-${id}` });
 
   const cat = `
 <svg enable-background="new 0 0 512 512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><g id="_x30_3_x2C__cat_x2C__kitty_x2C__animal_x2C__feline_x2C__animals">

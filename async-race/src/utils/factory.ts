@@ -56,6 +56,8 @@ export const Button = (
       'hover:bg-emerald-900',
       'm-2',
       'cursor-pointer',
+      'disabled:opacity-75',
+      'disabled:pointer-events-none',
     ],
     attributes: attributes,
     children,
