@@ -22,7 +22,7 @@ export async function createGarageController() {
     view.prepend(paginationInfo);
     return view;
   } catch (error) {
-    createErrorModal(
+    return createErrorModal(
       `Failed to load cats ${error instanceof Error ? error.message : String(error)}`,
     );
   }

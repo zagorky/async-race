@@ -13,7 +13,7 @@ export async function createWinnersController() {
     view.prepend(paginationInfo);
     return view;
   } catch (error) {
-    createErrorModal(
+    return createErrorModal(
       `Failed to load winners ${error instanceof Error ? error.message : String(error)}`,
     );
   }
