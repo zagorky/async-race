@@ -1,4 +1,4 @@
-import { getAllCars } from '~/api/garage-api.ts';
+import { getCar } from '~/api/garage-api.ts';
 import { fetchAndValidateData, path, requestConfig } from '~/api/new-api-handlers.ts';
 import { hasSome } from '@powwow-js/core';
 
@@ -31,27 +31,29 @@ export function isWinnersDetailedData(data: unknown): data is WinnerDetailedData
   );
 }
 
-export async function getDetailedData() {
-  const [garageResponse, winnersResponse] = await Promise.all([getAllCars(), getWinners()]);
-  const garage = garageResponse.data;
-  const winners = winnersResponse.data;
+export function getDetailedData() {
+  return getWinners().then((winnersResponse) => {
+    const totalWinners = winnersResponse.totalCount;
+    const winners = winnersResponse.data;
 
-  const validData = winners
-    .map((winner) => {
-      const car = garage.find((car) => car.id === winner.id);
-      return car
-        ? {
+    const detailedPromises = winners.map((winner) => {
+      return getCar(winner.id)
+        .then((carResponse) => {
+          return {
             id: winner.id,
-            name: car.name,
-            color: car.color,
+            name: carResponse.data.name,
+            color: carResponse.data.color,
             wins: winner.wins,
             time: winner.time,
-          }
-        : null;
-    })
-    .filter((winner): winner is WinnerDetailedDataType => winner !== null);
+          };
+        })
+        .catch(() => null);
+    });
 
-  return validData;
+    return Promise.all(detailedPromises).then((detailedWinners) => {
+      return { totalWinners, detailedWinners: detailedWinners.filter((winner) => winner !== null) };
+    });
+  });
 }
 
 export function isWinnersData(data: unknown): data is WinnersDataType[] {

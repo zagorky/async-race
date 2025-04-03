@@ -42,6 +42,9 @@ export const getCars = (page = 1): Promise<PaginatedResponse> =>
 export const getAllCars = (): Promise<PaginatedResponse> =>
   fetchAndValidateData(isGarageData)(`${path.garage}`, requestConfig.get);
 
+export const getCar = (id: number) =>
+  fetchAndValidateData(isSingleGarageData)(`${path.garage}/${id}`, requestConfig.get);
+
 export const setCar = (data: unknown) =>
   fetchAndValidateData(isSingleGarageData)(path.garage, requestConfig.post(data));
 
