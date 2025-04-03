@@ -41,23 +41,26 @@ export const getCars = (page = 1): Promise<PaginatedResponse> =>
 
 export const getAllCars = (): Promise<PaginatedResponse> =>
   fetchAndValidateData(isGarageData)(`${path.garage}`, requestConfig.get);
-// export const getCar = (id: number) =>
-//   fetchAndValidateData(isSingleGarageData)(`${path.garage}/${id}`, requestConfig.get);
 
 export const setCar = (data: unknown) =>
   fetchAndValidateData(isSingleGarageData)(path.garage, requestConfig.post(data));
 
-// export const deleteCar = (id: number) =>
-//   fetchAndValidateData(isSingleGarageData)(`${path.garage}/${id}`, requestConfig.delete);
-
 export const updateCar = (id: number, data: unknown) =>
   fetchAndValidateData(isSingleGarageData)(`${path.garage}/${id}`, requestConfig.patch(data));
 
-// TODO подумать как переписать функцию fetchAndValidateData
-export const deleteCar = (id: number) =>
-  fetch(`${baseUrl}${path.garage}/${id}`, requestConfig.delete).then((response) => {
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+export const deleteCar = (id: number) => {
+  return fetch(`${baseUrl}${path.garage}/${id}`, requestConfig.delete).then((garageResponse) => {
+    if (!garageResponse.ok) {
+      throw new Error(`HTTP error: ${garageResponse.status}`);
     }
-    return response;
+    return fetch(`${baseUrl}${path.winners}/${id}`, requestConfig.delete).then(
+      (winnersResponse) => {
+        const notFoundStatus = 404;
+        if (!winnersResponse.ok && winnersResponse.status !== notFoundStatus) {
+          throw new Error(`HTTP error: ${winnersResponse.status}`);
+        }
+        return garageResponse;
+      },
+    );
   });
+};
