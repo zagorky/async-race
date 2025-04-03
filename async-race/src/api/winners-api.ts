@@ -31,14 +31,14 @@ export function isWinnersDetailedData(data: unknown): data is WinnerDetailedData
   );
 }
 
-export function getDetailedData() {
-  return getWinners().then((winnersResponse) => {
-    const totalWinners = winnersResponse.totalCount;
-    const winners = winnersResponse.data;
+export function getDetailedData(page = 1) {
+  return getWinners(page)
+    .then((winnersResponse) => {
+      const totalCount = winnersResponse.totalCount;
+      const winners = winnersResponse.data;
 
-    const detailedPromises = winners.map((winner) => {
-      return getCar(winner.id)
-        .then((carResponse) => {
+      const detailedPromises = winners.map((winner) => {
+        return getCar(winner.id).then((carResponse) => {
           return {
             id: winner.id,
             name: carResponse.data.name,
@@ -46,14 +46,33 @@ export function getDetailedData() {
             wins: winner.wins,
             time: winner.time,
           };
-        })
-        .catch(() => null);
-    });
+        });
+        // .catch((error) => {
+        //   const notFound = 404;
+        //   if (error.response.status === notFound) {
+        //     console.warn(`Cat with id ${winner.id} not found in garage, but exists in winners`);
+        //     return null;
+        //   }
+        //   throw error;
+        // });
+      });
 
-    return Promise.all(detailedPromises).then((detailedWinners) => {
-      return { totalWinners, detailedWinners: detailedWinners.filter((winner) => winner !== null) };
+      return Promise.all(detailedPromises).then((detailedWinners) => {
+        return {
+          totalCount,
+          detailedWinners: detailedWinners.filter((winner) => winner !== null),
+        };
+      });
+    })
+    .catch((error) => {
+      console.warn('Failed to get winners data:', error);
+      return {
+        totalCount: 0,
+        detailedWinners: [],
+        invalidCount: 0,
+        originalCount: 0,
+      };
     });
-  });
 }
 
 export function isWinnersData(data: unknown): data is WinnersDataType[] {
@@ -70,5 +89,5 @@ export function isWinnersData(data: unknown): data is WinnersDataType[] {
   );
 }
 
-export const getWinners = () =>
-  fetchAndValidateData(isWinnersData)(`${path.winners}`, requestConfig.get);
+export const getWinners = (page = 1) =>
+  fetchAndValidateData(isWinnersData)(`${path.winners}?_page=${page}&_limit=5`, requestConfig.get);

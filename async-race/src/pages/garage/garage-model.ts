@@ -2,12 +2,6 @@ import type { GarageDataType } from '~/api/garage-api.ts';
 import { deleteCar, setCar, getCars } from '~/api/garage-api.ts';
 import { hasSome } from '@powwow-js/core';
 
-export function isGarageModel(model: unknown): model is GarageModelType {
-  return (
-    typeof model === 'object' && model !== null && 'getCars' in model && 'getTotalCars' in model
-  );
-}
-
 export type GarageModelType = {
   carPerPage: number;
   getTotalCars: () => number;
@@ -17,6 +11,12 @@ export type GarageModelType = {
   removeCar: (id: number) => Promise<number>;
   getCars: (page?: number) => Promise<GarageDataType[]>;
 };
+
+export function isGarageModel(model: unknown): model is GarageModelType {
+  return (
+    typeof model === 'object' && model !== null && 'getCars' in model && 'getTotalCars' in model
+  );
+}
 
 export function createGarageModel(): GarageModelType {
   let currentPage = 1;

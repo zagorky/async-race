@@ -8,7 +8,8 @@ import { createAddCarModal, createErrorModal } from '~/pages/modals.ts';
 import { carBrands, carModels } from '~/pages/garage/data-for-generation.ts';
 import { getRandomColor } from '~/utils/random-function.ts';
 import { createCarController } from '~/pages/car/car-controller.ts';
-import { createPaginationButtons } from '~/pages/pagination/pagination.ts';
+import { createPaginationButtons, createPaginationInfo } from '~/pages/pagination/pagination.ts';
+import { replaceCssClass } from '~/utils/helpers.ts';
 
 export async function createGarageController() {
   try {
@@ -38,6 +39,12 @@ export function createControlsContainer(
   const generateCarsButton = Button('Generate Cats');
   const [previousPageButton, nextPageButton] = createPaginationButtons(container, model, onUpdate);
 
+  const paginationContainer = Div([previousPageButton, nextPageButton], {
+    id: 'pagination-container',
+  });
+
+  replaceCssClass(paginationContainer, ['flex-col'], ['flex-row']);
+
   addCarButton.addEventListener('click', () => {
     const modal = createAddCarModal((data) => handleAddCar(data, container, model, onUpdate));
     document.body.append(modal);
@@ -47,14 +54,7 @@ export function createControlsContainer(
     handleGenerateCars(container, model, onUpdate);
   });
 
-  return [
-    addCarButton,
-    startRaceButton,
-    resetRaceButton,
-    generateCarsButton,
-    previousPageButton,
-    nextPageButton,
-  ];
+  return [addCarButton, startRaceButton, resetRaceButton, generateCarsButton, paginationContainer];
 }
 
 export function handleAddCar(
@@ -107,18 +107,4 @@ function addCarsAndUpdateView(
       onUpdate();
     })
     .catch((error: Error) => createErrorModal(`Error in processing cars: ${error.message}`));
-}
-
-function createPaginationInfo(model: GarageModelType) {
-  const paginationInfo = Div('', { id: 'pagination-info' });
-
-  function updatePaginationInfo() {
-    const currentPage = model.getCurrentPage();
-    const totalPages = model.getTotalPages();
-    const totalCars = model.getTotalCars();
-    paginationInfo.textContent = `Page ${currentPage} of ${totalPages} | Total cars: ${totalCars}`;
-  }
-
-  updatePaginationInfo();
-  return { element: paginationInfo, update: updatePaginationInfo };
 }
