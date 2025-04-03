@@ -5,22 +5,34 @@ import { replaceCssClass } from '~/utils/helpers.ts';
 export function createCarView(carData: GarageDataType) {
   const { id, color, name } = carData;
   const carName = Span(name);
-  const container = Div('', { id: `car-${id}` });
+  const container = Div('', { id: `car-${id}-container` });
   replaceCssClass(
     container,
     ['justify-center', 'items-center'],
-    ['justify-start', 'items-start', 'w-full'],
+    ['justify-start', 'items-start', 'w-full', 'mb-5'],
   );
-  const svgContainer = createCarPicture(color);
-  container.append(carName, svgContainer);
+  const svgContainer = createCarPicture(color, id);
+  const track = Div(svgContainer, { id: 'track' });
+  replaceCssClass(
+    track,
+    [],
+    ['relative', 'h-15', 'w-full', 'border-b-2', 'border-dashed', 'border-rose-300', 'mt-2'],
+  );
+
+  container.append(carName, track);
   return container;
 }
 
-export function createCarPicture(color: string) {
-  const svgContainer = Div('', { id: 'svg-container' });
+export function createCarPicture(color: string, id: number) {
+  const svgContainer = Div('', { id: `svg-container-${id}` });
+  replaceCssClass(
+    svgContainer,
+    [],
+    ['absolute', 'left-0', 'transition-transform', 'duration-100', 'will-change-transform', 'w-18'],
+  );
 
   const cat = `
-<svg width=75 enable-background="new 0 0 512 512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><g id="_x30_3_x2C__cat_x2C__kitty_x2C__animal_x2C__feline_x2C__animals">
+<svg enable-background="new 0 0 512 512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><g id="_x30_3_x2C__cat_x2C__kitty_x2C__animal_x2C__feline_x2C__animals">
   <g id="XMLID_737_">
     <path id="XMLID_43_" d="m141 480.606h-42.742c-42.601 0-77.258-34.657-77.258-77.258v-225.646c0-59.053 48.043-107.096 107.096-107.096h2.904c5.523 0 10 4.477 10 10s-4.477 10-10 10h-2.904c-48.025 0-87.096 39.072-87.096 87.096v225.646c0 31.572 25.686 57.258 57.258 57.258h42.742c5.523 0 10 4.478 10 10 0 5.523-4.477 10-10 10z" fill="#f49d3d"></path>
     <path id="XMLID_38_" d="m411 307.086v115.95c13.8 0 26.3 5.59 35.35 14.64s14.65 21.55 14.65 35.36c0 4.18-3.39 7.57-7.57 7.57h-72.43l-9.833-8.833-10.167 8.833h-170l-10-6.625-10 6.625h-30c-5.52 0-10-4.48-10-10v-70c0-112.6 80.9-206.29 187.75-226.12l142.25 21.91v30.36c0 30.47-17.38 58.06-44.4 71.36-3.42 1.68-5.6 5.15-5.6 8.97z" fill="${color}"></path>

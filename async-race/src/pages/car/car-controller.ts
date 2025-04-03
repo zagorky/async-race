@@ -57,6 +57,7 @@ export function createCarControls(carData: GarageDataType, model: CarModelType, 
     // onStart
   });
   const returnCarButton = Button('Return', { id: `return-${carData.id}` });
+
   returnCarButton.addEventListener('click', () => {
     //onReturn
   });
