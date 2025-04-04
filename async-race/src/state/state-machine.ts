@@ -1,3 +1,5 @@
+import { assertIsNonNullable } from '@powwow-js/core';
+
 export type RaceState = 'initial' | 'preparing' | 'racing' | 'finished' | 'paused' | 'broken';
 
 const transitions: Record<RaceState, RaceState[]> = {
@@ -41,3 +43,24 @@ function createRaceStateMachine() {
 }
 
 export const stateMachine = createRaceStateMachine();
+
+export function manageButtonsState(buttons: HTMLButtonElement[]) {
+  const updateButtonsState = () => {
+    const currentState = stateMachine.getCurrentState();
+    const shouldDisable = currentState !== 'initial' && currentState !== 'finished';
+    setButtonsState(buttons, shouldDisable);
+  };
+
+  updateButtonsState();
+  stateMachine.subscribeToRaceState(updateButtonsState);
+}
+
+export const setButtonsState = (buttons: HTMLButtonElement[], disabled: boolean) => {
+  buttons.forEach((button) => {
+    assertIsNonNullable(button.textContent);
+    button.disabled =
+      button.textContent.includes('Return') || button.textContent.includes('Reset')
+        ? !disabled
+        : disabled;
+  });
+};

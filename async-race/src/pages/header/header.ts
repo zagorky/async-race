@@ -1,7 +1,9 @@
-import { H1, Header, Link, Nav } from '~/utils/factory.ts';
+import { Button, H1, Header, Link, Nav } from '~/utils/factory.ts';
+import { manageButtonsState } from '~/state/state-machine.ts';
 
 export function createHeader() {
-  const garageLink = Link('Garage', '/');
-  const winnersLink = Link('Winners', '/winners');
-  return Header(Nav([garageLink, H1('Async Cats'), winnersLink]));
+  const garageLinkButton = Button(Link('Garage', '/'));
+  const winnersLinkButton = Button(Link('Winners', '/winners'));
+  manageButtonsState([garageLinkButton, winnersLinkButton]);
+  return Header(Nav([garageLinkButton, H1('Async Cats'), winnersLinkButton]));
 }

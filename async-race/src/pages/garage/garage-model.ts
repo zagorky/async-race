@@ -1,6 +1,8 @@
 import type { GarageDataType } from '~/api/garage-api.ts';
 import { deleteCar, setCar, getCars } from '~/api/garage-api.ts';
 import { hasSome } from '@powwow-js/core';
+import type { WinnersDataType } from '~/api/winners-api.ts';
+import { setWinner } from '~/api/winners-api.ts';
 
 export type GarageModelType = {
   carPerPage: number;
@@ -9,6 +11,7 @@ export type GarageModelType = {
   getCurrentPage: () => number;
   addCar: (car: Omit<GarageDataType, 'id'>) => Promise<number>;
   removeCar: (id: number) => Promise<number>;
+  setWinner: (data: WinnersDataType) => Promise<WinnersDataType>;
   getCars: (page?: number) => Promise<GarageDataType[]>;
 };
 
@@ -63,5 +66,11 @@ export function createGarageModel(): GarageModelType {
           throw error;
         });
     },
+    setWinner: (data: WinnersDataType) =>
+      setWinner(data)
+        .then((data) => data.data)
+        .catch((error) => {
+          throw error;
+        }),
   };
 }

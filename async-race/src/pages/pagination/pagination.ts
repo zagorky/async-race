@@ -3,13 +3,12 @@ import { isWinnersModel } from '~/pages/winners/winners-model.ts';
 import { Button, Div } from '~/utils/factory.ts';
 import type { GarageModelType } from '~/pages/garage/garage-model.ts';
 import { isGarageModel } from '~/pages/garage/garage-model.ts';
-import { createErrorModal } from '~/pages/modals.ts';
+import { createModal } from '~/pages/modals.ts';
 import { updateCarView } from '~/pages/garage/garage-controller.ts';
 import { createWinnersTable } from '~/pages/winners/winners-view.ts';
 import type { GarageDataType } from '~/api/garage-api.ts';
 import type { WinnersDataType } from '~/api/winners-api.ts';
 
-//TODO вообще переписать, надо соединить с роутером
 type PaginationModelType = {
   getCurrentPage: () => number;
   getTotalPages: () => number;
@@ -34,6 +33,7 @@ export function createPaginationButtons(
     handlePagination('next', container, model);
     onUpdate();
   });
+
   return [previousPageButton, nextPageButton];
 }
 
@@ -54,7 +54,7 @@ export function handlePagination(
         container.replaceChildren();
         updateCarView(container, cars);
       })
-      .catch((error: Error) => createErrorModal(`${error.toString()}`));
+      .catch((error: Error) => createModal(`${error.toString()}`));
   }
   if (isWinnersModel(model)) {
     model
@@ -63,7 +63,7 @@ export function handlePagination(
         container.replaceChildren();
         createWinnersTable(winners);
       })
-      .catch((error: Error) => createErrorModal(`${error.toString()}`));
+      .catch((error: Error) => createModal(`${error.toString()}`));
   }
 }
 

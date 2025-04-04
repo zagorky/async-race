@@ -18,17 +18,17 @@ export function createCarView(carData: GarageDataType): CarViewType {
   replaceCssClass(
     container,
     ['justify-center', 'items-center'],
-    ['justify-start', 'items-start', 'w-full', 'mb-5'],
+    ['justify-start', 'items-start', 'w-full', 'mb-1'],
   );
   replaceCssClass(
     track,
     [],
-    ['relative', 'h-15', 'w-full', 'border-b-2', 'border-dashed', 'border-rose-300', 'mt-2'],
+    ['relative', 'h-9', 'w-full', 'border-b-2', 'border-dashed', 'border-rose-300', 'mt-2'],
   );
   replaceCssClass(
     svgContainer,
     [],
-    ['absolute', 'left-0', 'transition-transform', 'duration-100', 'will-change-transform', 'w-18'],
+    ['absolute', 'left-0', 'transition-transform', 'duration-100', 'will-change-transform', 'w-10'],
   );
   container.append(carName, track);
   return { container, carName, svgContainer, track };

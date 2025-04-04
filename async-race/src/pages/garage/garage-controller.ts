@@ -6,10 +6,11 @@ import { createGarageModel } from '~/pages/garage/garage-model.ts';
 import { createGarageView } from '~/pages/garage/garage-view.ts';
 import { createAddCarModal, createModal } from '~/pages/modals.ts';
 import { generateRandomCars } from '~/pages/garage/data-for-generation.ts';
-import { createCarController, setButtonsState } from '~/pages/car/car-controller.ts';
+import { createCarController } from '~/pages/car/car-controller.ts';
 import { createPaginationButtons, createPaginationInfo } from '~/pages/pagination/pagination.ts';
 import { replaceCssClass } from '~/utils/helpers.ts';
-import { resetRace } from '~/pages/race/race-utilities.ts';
+import { resetRace, startRace } from '~/pages/race/race-utilities.ts';
+import { setButtonsState } from '~/state/state-machine.ts';
 
 export async function createGarageController() {
   try {
@@ -53,7 +54,6 @@ export function createControlsContainer(
   });
 
   replaceCssClass(paginationContainer, ['flex-col'], ['flex-row']);
-
   addCarButton.addEventListener('click', () => {
     const modal = createAddCarModal((data) => handleAddCar(data, container, model, onUpdate));
     document.body.append(modal);
@@ -64,7 +64,16 @@ export function createControlsContainer(
   });
   startRaceButton.addEventListener('click', () => {
     setButtonsState(buttons, true);
-    // start
+    model
+      .getCars(model.getCurrentPage())
+      .then((cars) => {
+        startRace(cars).catch((error) => {
+          throw error;
+        });
+      })
+      .catch((error) => {
+        console.error('Failed to get cars:', error);
+      });
   });
   resetRaceButton.addEventListener('click', () => {
     setButtonsState(buttons, false);
