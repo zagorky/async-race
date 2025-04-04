@@ -89,5 +89,18 @@ export function isWinnersData(data: unknown): data is WinnersDataType[] {
   );
 }
 
+export function isWinnerData(data: unknown): data is WinnersDataType {
+  return (
+    hasSome<object>(data) &&
+    'wins' in data &&
+    'time' in data &&
+    typeof data.wins === 'number' &&
+    typeof data.time === 'number'
+  );
+}
+
 export const getWinners = (page = 1) =>
   fetchAndValidateData(isWinnersData)(`${path.winners}?_page=${page}&_limit=5`, requestConfig.get);
+
+export const setWinner = (data: unknown) =>
+  fetchAndValidateData(isWinnerData)(path.winners, requestConfig.post(data));

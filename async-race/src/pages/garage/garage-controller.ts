@@ -4,12 +4,12 @@ import { Button, Div } from '~/utils/factory.ts';
 import type { GarageModelType } from '~/pages/garage/garage-model.ts';
 import { createGarageModel } from '~/pages/garage/garage-model.ts';
 import { createGarageView } from '~/pages/garage/garage-view.ts';
-import { createAddCarModal, createErrorModal } from '~/pages/modals.ts';
-import { carBrands, carModels } from '~/pages/garage/data-for-generation.ts';
-import { getRandomColor } from '~/utils/random-function.ts';
-import { createCarController } from '~/pages/car/car-controller.ts';
+import { createAddCarModal, createModal } from '~/pages/modals.ts';
+import { generateRandomCars } from '~/pages/garage/data-for-generation.ts';
+import { createCarController, setButtonsState } from '~/pages/car/car-controller.ts';
 import { createPaginationButtons, createPaginationInfo } from '~/pages/pagination/pagination.ts';
 import { replaceCssClass } from '~/utils/helpers.ts';
+import { resetRace } from '~/pages/race/race-utilities.ts';
 
 export async function createGarageController() {
   try {
@@ -22,7 +22,7 @@ export async function createGarageController() {
     view.prepend(paginationInfo);
     return view;
   } catch (error) {
-    return createErrorModal(
+    return createModal(
       `Failed to load cats ${error instanceof Error ? error.message : String(error)}`,
     );
   }
@@ -39,6 +39,15 @@ export function createControlsContainer(
   const generateCarsButton = Button('Generate Cats');
   const [previousPageButton, nextPageButton] = createPaginationButtons(container, model, onUpdate);
 
+  const buttons = [
+    addCarButton,
+    startRaceButton,
+    resetRaceButton,
+    generateCarsButton,
+    previousPageButton,
+    nextPageButton,
+  ];
+
   const paginationContainer = Div([previousPageButton, nextPageButton], {
     id: 'pagination-container',
   });
@@ -53,8 +62,23 @@ export function createControlsContainer(
   generateCarsButton.addEventListener('click', () => {
     handleGenerateCars(container, model, onUpdate);
   });
+  startRaceButton.addEventListener('click', () => {
+    setButtonsState(buttons, true);
+    // start
+  });
+  resetRaceButton.addEventListener('click', () => {
+    setButtonsState(buttons, false);
+    model
+      .getCars(model.getCurrentPage())
+      .then((cars) => {
+        resetRace(cars);
+      })
+      .catch((error) => {
+        console.error('Failed to get cars:', error);
+      });
+  });
 
-  return [addCarButton, startRaceButton, resetRaceButton, generateCarsButton, paginationContainer];
+  return buttons;
 }
 
 export function handleAddCar(
@@ -75,20 +99,6 @@ export function handleGenerateCars(
   addCarsAndUpdateView(randomCars, container, model, onUpdate);
 }
 
-function generateRandomCars() {
-  const numberOfNewCars = 10; // TODO не забудь исправить на 100
-  const cars = [];
-  for (let i = 0; i < numberOfNewCars; i += 1) {
-    const brand = carBrands[Math.floor(Math.random() * carBrands.length)];
-    const model = carModels[Math.floor(Math.random() * carModels.length)];
-    cars.push({
-      name: `${brand} ${model}`,
-      color: getRandomColor(),
-    });
-  }
-  return cars;
-}
-
 export function updateCarView(container: HTMLElement, cars: GarageDataType[]) {
   cars.forEach((car) => container.append(createCarController(car)));
 }
@@ -106,5 +116,5 @@ function addCarsAndUpdateView(
       updateCarView(container, updatedCars);
       onUpdate();
     })
-    .catch((error: Error) => createErrorModal(`Error in processing cars: ${error.message}`));
+    .catch((error: Error) => createModal(`Error in processing cars: ${error.message}`));
 }

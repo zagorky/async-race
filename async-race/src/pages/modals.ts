@@ -2,7 +2,7 @@ import { createPopup } from '~/utils/modal.ts';
 import type { GarageDataType } from '~/api/garage-api.ts';
 import { Button, Input, Label } from '~/utils/factory.ts';
 
-export function createErrorModal(message: string) {
+export function createModal(message: string) {
   const modal = createPopup({ children: message });
   document.body.append(modal);
   modal.showModal();
@@ -40,7 +40,7 @@ export function createUpdateCarModal(
 
   updateButton.addEventListener('click', () => {
     onUpdate({ id: carData.id, color: colorInput.value, name: nameInput.value }).catch((error) => {
-      createErrorModal(`Update failed: ${error instanceof Error ? error.message : String(error)}`);
+      createModal(`Update failed: ${error instanceof Error ? error.message : String(error)}`);
     });
     modal.remove();
   });
@@ -84,9 +84,15 @@ export function createAddCarModal(onAdd: (data: Omit<GarageDataType, 'id'>) => v
       onAdd({ color: color, name: name });
       modal.remove();
     } else {
-      createErrorModal('Enter cat name');
+      createModal('Enter cat name');
     }
   });
 
   return modal;
+}
+
+export function createWinnerModal(message: string) {
+  const modal = createPopup({ children: message });
+  document.body.append(modal);
+  modal.showModal();
 }
