@@ -11,6 +11,7 @@ import { createPaginationButtons, createPaginationInfo } from '~/pages/paginatio
 import { replaceCssClass } from '~/utils/helpers.ts';
 import { resetRace, startRace } from '~/pages/race/race-utilities.ts';
 import { setButtonsState } from '~/state/state-machine.ts';
+import { createPopup } from '~/utils/modal.ts';
 
 export async function createGarageController() {
   try {
@@ -23,9 +24,13 @@ export async function createGarageController() {
     view.prepend(paginationInfo);
     return view;
   } catch (error) {
-    return createModal(
-      `Failed to load cats ${error instanceof Error ? error.message : String(error)}`,
-    );
+    const modal = createPopup({
+      children: `Failed to load cats ${error instanceof Error ? error.message : String(error)}`,
+    });
+
+    document.body.append(modal);
+    modal.showModal();
+    return modal;
   }
 }
 

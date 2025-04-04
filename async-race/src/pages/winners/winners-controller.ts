@@ -1,8 +1,8 @@
 import { createWinnersModel } from '~/pages/winners/winners-model.ts';
 import { addWinnerToTable, createWinnersView } from '~/pages/winners/winners-view.ts';
-import { createModal } from '~/pages/modals.ts';
 import type { WinnerDetailedDataType } from '~/api/winners-api.ts';
 import { createPaginationInfo } from '~/pages/pagination/pagination.ts';
+import { createPopup } from '~/utils/modal.ts';
 
 export async function createWinnersController() {
   try {
@@ -13,9 +13,13 @@ export async function createWinnersController() {
     view.prepend(paginationInfo);
     return view;
   } catch (error) {
-    return createModal(
-      `Failed to load winners ${error instanceof Error ? error.message : String(error)}`,
-    );
+    const modal = createPopup({
+      children: `Failed to load winners ${error instanceof Error ? error.message : String(error)}`,
+    });
+
+    document.body.append(modal);
+    modal.showModal();
+    return modal;
   }
 }
 

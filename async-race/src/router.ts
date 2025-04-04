@@ -62,6 +62,6 @@ export async function router(): Promise<void> {
 export function navigator(url: string) {
   history.pushState(null, '', url);
   router().catch((error) => {
-    console.error('router error in navigator:', error);
+    console.warn('router error in navigator:', error);
   });
 }
