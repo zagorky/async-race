@@ -6,14 +6,8 @@ import { createCarView } from '~/pages/car/car-view.ts';
 import type { CarModelType } from '~/pages/car/car-model.ts';
 import { createCarModel } from '~/pages/car/car-model.ts';
 import { replaceCssClass } from '~/utils/helpers.ts';
-import {
-  animateCar,
-  calculateAnimationDuration,
-  carAnimations,
-  handleCarBreakdown,
-  resetCarPosition,
-} from '~/pages/animation/animation.ts';
-import { hasSome } from '@powwow-js/core';
+import { carAnimations, resetCarPosition } from '~/pages/animation/animation.ts';
+import { startCar } from '~/pages/race/race-utilities.ts';
 
 export function createCarController(carData: GarageDataType) {
   const model = createCarModel();
@@ -68,27 +62,8 @@ export function createCarControls(carData: GarageDataType, model: CarModelType, 
       .catch((error: Error) => createErrorModal(`error in delete ${error.message}`));
   });
   buttons.startCarButton.addEventListener('click', () => {
-    const animationState = carAnimations.get(carElement);
-    if (hasSome(animationState)) {
-      animationState.isBroken = false;
-      carElement.style.border = '';
-      setButtonsState(buttons, true);
-
-      model
-        .startCar(carData.id)
-        .then((data) => {
-          const duration = calculateAnimationDuration(data.velocity, data.distance);
-          animateCar(carElement, duration);
-
-          return model.driveCar(carData.id).then((result) => {
-            if (!result.success) {
-              handleCarBreakdown(carElement);
-            }
-          });
-        })
-
-        .catch(() => handleCarBreakdown(carElement));
-    }
+    startCar(carData.id, model, carElement);
+    setButtonsState(buttons, true);
   });
   buttons.returnCarButton.addEventListener('click', () => {
     resetCarPosition(carElement);
