@@ -21,3 +21,25 @@ dialog::backdrop {
 input[type='color'] {
   appearance: none;
 }
+
+@keyframes blood-glitch {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 2px rgb(255 0 0 / 30%));
+  }
+  20% {
+    filter: drop-shadow(0 0 8px rgb(255 0 0 / 80%));
+  }
+  50% {
+    filter: drop-shadow(0 0 12px rgb(255 50 50 / 100%));
+  }
+  80% {
+    filter: drop-shadow(0 0 5px rgb(200 0 0 / 60%));
+  }
+}
+
+.broken-car {
+  animation:
+    blood-glitch 1.2s infinite,
+    shake 0.4s infinite;
+}

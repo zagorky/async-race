@@ -48,7 +48,7 @@ export function stopCar(carElement: HTMLElement) {
     animationFrameId = null;
   }
   carElement.style.transform = 'translateX(0)';
-  carElement.style.border = '3px solid red';
+  // carElement.style.filter = 'grayscale(100%)';
 }
 
 export function calculateAnimationDuration(velocity: number, distance: number) {
@@ -64,8 +64,8 @@ export function handleCarBreakdown(carElement: HTMLElement) {
       cancelAnimationFrame(animationState.frameId);
       animationState.frameId = null;
     }
-
-    carElement.style.border = '3px solid red';
+    carElement.classList.add('broken-car');
+    // carElement.style.filter = 'grayscale(100%)';
   }
 }
 
@@ -81,6 +81,7 @@ export function resetCarPosition(carElement: HTMLElement) {
     }
 
     carElement.style.transform = 'translateX(0)';
-    carElement.style.border = '';
+    carElement.style.filter = '';
+    carElement.classList.remove('broken-car');
   }
 }
