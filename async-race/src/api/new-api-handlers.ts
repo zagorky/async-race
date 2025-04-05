@@ -3,6 +3,7 @@ type RequestConfigType = {
   post: (data: unknown) => RequestInit;
   patch: (data: unknown) => RequestInit;
   delete: RequestInit;
+  put: (data: unknown) => RequestInit;
 };
 
 export const baseUrl = 'http://127.0.0.1:3000';
@@ -11,17 +12,6 @@ export const path = {
   garage: '/garage',
   winners: '/winners',
   engine: '/engine',
-};
-
-export const paginate = {
-  page: {
-    key: '_page',
-    value: 2,
-  },
-  limit: {
-    key: '_limit',
-    value: 7,
-  },
 };
 
 export const requestConfig: RequestConfigType = {
@@ -45,6 +35,13 @@ export const requestConfig: RequestConfigType = {
   delete: {
     method: 'DELETE',
   },
+  put: (data: unknown) => ({
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  }),
 };
 
 class JsonError extends Error {

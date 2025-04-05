@@ -65,18 +65,12 @@ export function manageButtonsState(buttons: HTMLButtonElement[]) {
         break;
       }
       case 'broken': {
-        // buttons.forEach((button) => {
-        //   button.disabled = !button.textContent?.includes('Reset');
-        // });
         buttons.forEach((button) => {
           button.disabled = !['Return', 'Reset'].some((text) => button.textContent?.includes(text));
         });
         break;
       }
       case 'finished': {
-        // buttons.forEach((button) => {
-        //   button.disabled = !button.textContent?.includes('Reset');
-        // });
         buttons.forEach((button) => {
           button.disabled = !['Return', 'Reset'].some((text) => button.textContent?.includes(text));
         });

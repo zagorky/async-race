@@ -72,7 +72,7 @@ export function createCarControls(carData: GarageDataType, model: CarModelType, 
       .catch((error: Error) => createModal(`error in delete ${error.message}`));
   });
   startCarButton.addEventListener('click', () => {
-    startCar(carData.id);
+    startCar(carData.id, true);
   });
   returnCarButton.addEventListener('click', () => {
     returnCar(carData.id);

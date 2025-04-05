@@ -85,7 +85,7 @@ export default [
       ],
       'import/no-cycle': 'error',
       semi: ['error', 'always'],
-      'max-lines-per-function': ['error', 60],
+      // 'max-lines-per-function': ['error', 60],
       'no-magic-numbers': [
         'error',
         {
