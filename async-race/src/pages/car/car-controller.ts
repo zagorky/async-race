@@ -6,9 +6,9 @@ import { createCarView } from '~/pages/car/car-view.ts';
 import type { CarModelType } from '~/pages/car/car-model.ts';
 import { createCarModel } from '~/pages/car/car-model.ts';
 import { replaceCssClass } from '~/utils/helpers.ts';
-import { carAnimations, resetCarPosition } from '~/pages/animation/animation.ts';
-import { startCar } from '~/pages/race/race-utilities.ts';
-import { manageButtonsState, setButtonsState } from '~/state/state-machine.ts';
+import { carAnimations } from '~/pages/animation/animation.ts';
+import { returnCar, startCar } from '~/pages/race/race-utilities.ts';
+import { manageButtonsState } from '~/state/state-machine.ts';
 
 export function createCarController(carData: GarageDataType) {
   const model = createCarModel();
@@ -68,11 +68,11 @@ export function createCarControls(carData: GarageDataType, model: CarModelType, 
   });
   startCarButton.addEventListener('click', () => {
     startCar(carData.id);
-    setButtonsState([updateCarButton, removeCarButton, startCarButton, returnCarButton], true);
+    // setButtonsState([updateCarButton, removeCarButton, startCarButton, returnCarButton], true);
   });
   returnCarButton.addEventListener('click', () => {
-    resetCarPosition(carElement);
-    setButtonsState([updateCarButton, removeCarButton, startCarButton, returnCarButton], false);
+    returnCar(carData.id);
+    // setButtonsState([updateCarButton, removeCarButton, startCarButton, returnCarButton], false);
   });
   return [updateCarButton, removeCarButton, startCarButton, returnCarButton];
 }
