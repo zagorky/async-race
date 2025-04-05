@@ -8,7 +8,7 @@ import { createCarModel } from '~/pages/car/car-model.ts';
 import { replaceCssClass } from '~/utils/helpers.ts';
 import { carAnimations } from '~/pages/animation/animation.ts';
 import { returnCar, startCar } from '~/pages/race/race-utilities.ts';
-import { manageButtonsState } from '~/state/state-machine.ts';
+import { registerButtons } from '~/state/state-manager.ts';
 
 export function createCarController(carData: GarageDataType) {
   const model = createCarModel();
@@ -38,7 +38,12 @@ export function createCarControls(carData: GarageDataType, model: CarModelType, 
     carData.id,
   );
 
-  manageButtonsState([updateCarButton, removeCarButton, startCarButton, returnCarButton]);
+  registerButtons(
+    'car',
+    [updateCarButton, removeCarButton, startCarButton, returnCarButton],
+    carData.id,
+    view.svgContainer,
+  );
   const carElement = view.svgContainer;
   carAnimations.set(carElement, {
     frameId: null,
@@ -68,11 +73,9 @@ export function createCarControls(carData: GarageDataType, model: CarModelType, 
   });
   startCarButton.addEventListener('click', () => {
     startCar(carData.id);
-    // setButtonsState([updateCarButton, removeCarButton, startCarButton, returnCarButton], true);
   });
   returnCarButton.addEventListener('click', () => {
     returnCar(carData.id);
-    // setButtonsState([updateCarButton, removeCarButton, startCarButton, returnCarButton], false);
   });
   return [updateCarButton, removeCarButton, startCarButton, returnCarButton];
 }

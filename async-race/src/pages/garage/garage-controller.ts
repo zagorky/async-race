@@ -10,7 +10,7 @@ import { createCarController } from '~/pages/car/car-controller.ts';
 import { createPaginationButtons, createPaginationInfo } from '~/pages/pagination/pagination.ts';
 import { replaceCssClass } from '~/utils/helpers.ts';
 import { resetRace, startRace } from '~/pages/race/race-utilities.ts';
-import { manageButtonsState } from '~/state/state-machine.ts';
+import { registerButtons } from '~/state/state-manager.ts';
 import { createPopup } from '~/utils/modal.ts';
 
 export async function createGarageController() {
@@ -54,7 +54,7 @@ export function createControlsContainer(
     nextPageButton,
   ];
 
-  manageButtonsState(buttons);
+  registerButtons('garage', buttons);
 
   const paginationContainer = Div([previousPageButton, nextPageButton], {
     id: 'pagination-container',

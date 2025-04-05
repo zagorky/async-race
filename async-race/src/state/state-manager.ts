@@ -1,5 +1,3 @@
-import { assertIsNonNullable } from '@powwow-js/core';
-
 export type RaceState = 'initial' | 'preparing' | 'racing' | 'finished' | 'broken';
 
 const transitions: Record<RaceState, RaceState[]> = {
@@ -12,19 +10,14 @@ const transitions: Record<RaceState, RaceState[]> = {
 
 function createRaceStateMachine() {
   let currentState: RaceState = 'initial';
-  let previousState = '';
   const subscribers: ((state: RaceState) => void)[] = [];
 
   function transitionRaceState(newState: RaceState) {
-    console.log('current:', stateMachine.getCurrentState());
     if (!transitions[currentState].includes(newState)) {
       console.warn(`invalid transition from ${currentState} to ${newState}`);
       return;
     }
-    previousState = currentState;
     currentState = newState;
-    console.log('newState:', stateMachine.getCurrentState());
-
     subscribers.forEach((callback) => callback(newState));
   }
 
@@ -40,18 +33,16 @@ function createRaceStateMachine() {
 
   return {
     getCurrentState: () => currentState,
-    getPreviousState: () => previousState,
-    getSubscribers: () => subscribers,
     transitionRaceState: (newState: RaceState) => transitionRaceState(newState),
     subscribeToRaceState: (callback: (state: RaceState) => void) => subscribeToRaceState(callback),
   };
 }
 
-export const stateMachine = createRaceStateMachine();
+export const stateManager = createRaceStateMachine();
 
 export function manageButtonsState(buttons: HTMLButtonElement[]) {
   const updateButtonsState = () => {
-    const currentState = stateMachine.getCurrentState();
+    const currentState = stateManager.getCurrentState();
 
     switch (currentState) {
       case 'initial': {
@@ -102,12 +93,37 @@ export function manageButtonsState(buttons: HTMLButtonElement[]) {
   };
 
   updateButtonsState();
-  stateMachine.subscribeToRaceState(updateButtonsState);
+  stateManager.subscribeToRaceState(updateButtonsState);
 }
 
-export const setButtonsState = (buttons: HTMLButtonElement[], disabled: boolean) => {
-  buttons.forEach((button) => {
-    assertIsNonNullable(button.textContent);
-    button.disabled = button.textContent.includes('Return') ? !disabled : disabled;
-  });
+type ButtonStoreApp = {
+  garage: HTMLButtonElement[];
+  header: HTMLButtonElement[];
+  car: Map<number, { buttons: HTMLButtonElement[]; element: HTMLElement }>;
 };
+
+export const buttonStore: ButtonStoreApp = {
+  garage: [],
+  header: [],
+  car: new Map(),
+};
+
+export function registerButtons(
+  type: 'garage' | 'header' | 'car',
+  buttons: HTMLButtonElement[],
+  carId?: number,
+  svg?: HTMLElement,
+) {
+  if (type === 'car') {
+    if (carId !== undefined && svg !== undefined) {
+      buttonStore.car.set(carId, {
+        element: svg,
+        buttons,
+      });
+      manageButtonsState(buttons);
+    }
+  } else {
+    buttonStore[type] = buttons;
+    manageButtonsState(buttons);
+  }
+}

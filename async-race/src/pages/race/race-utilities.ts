@@ -10,10 +10,10 @@ import { assertIsInstanceOf, assertIsNonNullable } from '@powwow-js/core';
 import { createModal } from '~/pages/modals.ts';
 import type { GarageDataType } from '~/api/garage-api.ts';
 import { setWinner } from '~/api/winners-api.ts';
-import { stateMachine } from '~/state/state-machine.ts';
+import { buttonStore, stateManager } from '~/state/state-manager.ts';
 
 export function startCar(id: number) {
-  stateMachine.transitionRaceState('preparing');
+  stateManager.transitionRaceState('preparing');
   const model = createCarModel();
   const carElement = findCarByID(id);
   const animationState = carAnimations.get(carElement);
@@ -23,28 +23,28 @@ export function startCar(id: number) {
   model
     .startCar(id)
     .then((data) => {
-      stateMachine.transitionRaceState('racing');
+      stateManager.transitionRaceState('racing');
       const duration = calculateAnimationDuration(data.velocity, data.distance);
       animateCar(carElement, duration);
 
       return model.driveCar(id).then((result) => {
         if (!result.success) {
-          stateMachine.transitionRaceState('broken');
           handleCarBreakdown(carElement);
         }
-        stateMachine.transitionRaceState('finished');
+        stateManager.transitionRaceState('finished');
         return { id, time: duration };
       });
     })
     .catch(() => {
-      stateMachine.transitionRaceState('broken');
       handleCarBreakdown(carElement);
       return null;
     });
 }
 
 export async function startRace(cars: GarageDataType[]) {
-  stateMachine.transitionRaceState('preparing');
+  if (stateManager.getCurrentState() !== 'initial') return;
+
+  stateManager.transitionRaceState('preparing');
 
   const model = createCarModel();
 
@@ -58,22 +58,21 @@ export async function startRace(cars: GarageDataType[]) {
 
       const driveResult = await model.driveCar(car.id);
       if (!driveResult.success) {
-        stateMachine.transitionRaceState('broken');
         handleCarBreakdown(element);
         return null;
       }
-      stateMachine.transitionRaceState('finished');
+      // createModal(`Winner: ${winner.name} (Time: ${time}s)`);
+      stateManager.transitionRaceState('finished');
       return { id: car.id, time: duration, name: car.name };
     } catch {
       const element = findCarByID(car.id);
-      stateMachine.transitionRaceState('broken');
 
       if (element) handleCarBreakdown(element);
       return null;
     }
   });
 
-  stateMachine.transitionRaceState('racing');
+  stateManager.transitionRaceState('racing');
 
   let winner: { id: number; time: number; name: string } | null = null;
   const results = await Promise.all(racePromises);
@@ -85,7 +84,7 @@ export async function startRace(cars: GarageDataType[]) {
   if (winner) {
     const divider = 1000;
     const time = Number((winner.time / divider).toFixed(1));
-    stateMachine.transitionRaceState('finished');
+    stateManager.transitionRaceState('finished');
     createModal(`Winner: ${winner.name} (Time: ${time}s)`);
     try {
       const winnerData = { id: winner.id, wins: 1, time: time };
@@ -95,7 +94,7 @@ export async function startRace(cars: GarageDataType[]) {
       console.warn('Failed to save winner:', error);
     }
   } else {
-    stateMachine.transitionRaceState('broken');
+    stateManager.transitionRaceState('finished');
     createModal('All cats are broken, there are no winners');
   }
 }
@@ -106,21 +105,19 @@ export function resetRace(cars: GarageDataType[]) {
     assertIsInstanceOf(HTMLElement, element);
     returnCar(car.id);
   });
-  stateMachine.transitionRaceState('initial');
+  stateManager.transitionRaceState('initial');
 }
 
 function findCarByID(id: number) {
-  const element = document.querySelector(`#svg-container-${id}`);
-  assertIsInstanceOf(HTMLElement, element);
-  return element;
+  const element = buttonStore.car.get(id);
+  assertIsInstanceOf(HTMLElement, element?.element);
+  return element?.element;
 }
 
 export function returnCar(id: number) {
   const model = createCarModel();
   const carElement = findCarByID(id);
-  model
-    .returnCar(id)
-    .catch((error) => console.warn(`Ошибка при остановке двигателя машины с ID ${id}:`, error));
+  model.returnCar(id).catch((error) => console.warn(`Car #${id}:`, error));
   resetCarPosition(carElement);
-  stateMachine.transitionRaceState('initial');
+  stateManager.transitionRaceState('initial');
 }
