@@ -100,7 +100,7 @@ export function isWinnerData(data: unknown): data is WinnersDataType {
 }
 
 export const getWinners = (page = 1) =>
-  fetchAndValidateData(isWinnersData)(`${path.winners}?_page=${page}&_limit=5`, requestConfig.get);
+  fetchAndValidateData(isWinnersData)(`${path.winners}?_page=${page}&_limit=10`, requestConfig.get);
 
 export const setWinner = (data: unknown) =>
   fetchAndValidateData(isWinnerData)(path.winners, requestConfig.post(data));

@@ -76,7 +76,7 @@ export function createPaginationInfo(model: PaginationModelType) {
 
     if (isGarageModel(model)) {
       const totalCars = model.getTotalCars();
-      paginationInfo.textContent = `Page ${currentPage} of ${totalPages} | Total cars: ${totalCars}`;
+      paginationInfo.textContent = `Page ${currentPage} of ${totalPages} | Total cats: ${totalCars}`;
     }
     if (isWinnersModel(model)) {
       const totalWinners = model.getTotalWinners();

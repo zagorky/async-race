@@ -21,7 +21,7 @@ export function isWinnersModel(model: unknown): model is WinnerModelType {
 
 export function createWinnersModel(): WinnerModelType {
   let currentPage = 1;
-  const winnerPerPage = 5;
+  const winnerPerPage = 10;
   let totalWinners = 0;
 
   return {

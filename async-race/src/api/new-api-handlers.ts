@@ -1,5 +1,3 @@
-// type QueryParametersType = { key: string; value: string | number }[];
-
 type RequestConfigType = {
   get: RequestInit;
   post: (data: unknown) => RequestInit;
