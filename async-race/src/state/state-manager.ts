@@ -1,5 +1,17 @@
 export type RaceState = 'initial' | 'preparing' | 'racing' | 'finished' | 'broken';
 
+type ButtonStoreApp = {
+  garage: HTMLButtonElement[];
+  header: HTMLButtonElement[];
+  car: Map<number, { buttons: HTMLButtonElement[]; element: HTMLElement }>;
+};
+
+export const buttonStore: ButtonStoreApp = {
+  garage: [],
+  header: [],
+  car: new Map(),
+};
+
 const transitions: Record<RaceState, RaceState[]> = {
   initial: ['preparing'],
   preparing: ['racing', 'broken'],
@@ -45,42 +57,27 @@ export function manageButtonsState(buttons: HTMLButtonElement[]) {
     const currentState = stateManager.getCurrentState();
 
     switch (currentState) {
-      case 'initial': {
+      case 'initial':
+      default: {
         buttons.forEach((button) => {
-          button.disabled = ['Return', 'Reset'].some((text) => button.textContent?.includes(text));
+          button.disabled = isReturnOrReset(button);
         });
+        break;
+      }
 
-        break;
-      }
-      case 'preparing': {
-        buttons.forEach((button) => {
-          button.disabled = true;
-        });
-        break;
-      }
+      case 'preparing':
       case 'racing': {
         buttons.forEach((button) => {
           button.disabled = true;
         });
         break;
       }
-      case 'broken': {
-        buttons.forEach((button) => {
-          button.disabled = !['Return', 'Reset'].some((text) => button.textContent?.includes(text));
-        });
-        break;
-      }
+
+      case 'broken':
       case 'finished': {
         buttons.forEach((button) => {
-          button.disabled = !['Return', 'Reset'].some((text) => button.textContent?.includes(text));
+          button.disabled = !isReturnOrReset(button);
         });
-        break;
-      }
-      default: {
-        buttons.forEach((button) => {
-          button.disabled = ['Return', 'Reset'].some((text) => button.textContent?.includes(text));
-        });
-
         break;
       }
     }
@@ -90,17 +87,8 @@ export function manageButtonsState(buttons: HTMLButtonElement[]) {
   stateManager.subscribeToRaceState(updateButtonsState);
 }
 
-type ButtonStoreApp = {
-  garage: HTMLButtonElement[];
-  header: HTMLButtonElement[];
-  car: Map<number, { buttons: HTMLButtonElement[]; element: HTMLElement }>;
-};
-
-export const buttonStore: ButtonStoreApp = {
-  garage: [],
-  header: [],
-  car: new Map(),
-};
+const isReturnOrReset = (button: HTMLButtonElement) =>
+  ['Return', 'Reset'].some((text) => button.textContent?.includes(text));
 
 export function registerButtons(
   type: 'garage' | 'header' | 'car',

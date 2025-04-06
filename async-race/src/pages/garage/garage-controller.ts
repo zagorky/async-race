@@ -65,28 +65,8 @@ export function createControlsContainer(
   generateCarsButton.addEventListener('click', () => {
     handleGenerateCars(container, model, onUpdate);
   });
-  startRaceButton.addEventListener('click', () => {
-    model
-      .getCars(model.getCurrentPage())
-      .then((cars) => {
-        startRace(cars).catch((error) => {
-          throw error;
-        });
-      })
-      .catch((error) => {
-        console.error('Failed to get cars:', error);
-      });
-  });
-  resetRaceButton.addEventListener('click', () => {
-    model
-      .getCars(model.getCurrentPage())
-      .then((cars) => {
-        resetRace(cars);
-      })
-      .catch((error) => {
-        console.error('Failed to get cars:', error);
-      });
-  });
+  startRaceButton.addEventListener('click', () => handleStartRace(model));
+  resetRaceButton.addEventListener('click', () => handleResetRace(model));
 
   return buttons;
 }
@@ -127,4 +107,28 @@ function addCarsAndUpdateView(
       onUpdate();
     })
     .catch((error: Error) => createModal(`Error in processing cars: ${error.message}`));
+}
+
+function handleStartRace(model: GarageModelType) {
+  model
+    .getCars(model.getCurrentPage())
+    .then((cars) => {
+      startRace(cars).catch((error) => {
+        throw error;
+      });
+    })
+    .catch((error) => {
+      console.error('Failed to get cars:', error);
+    });
+}
+
+function handleResetRace(model: GarageModelType) {
+  model
+    .getCars(model.getCurrentPage())
+    .then((cars) => {
+      resetRace(cars);
+    })
+    .catch((error) => {
+      console.error('Failed to get cars:', error);
+    });
 }

@@ -13,24 +13,6 @@ export type WinnerDetailedDataType = WinnersDataType & {
   name: string;
 };
 
-// export function isWinnersDetailedData(data: unknown): data is WinnerDetailedDataType[] {
-//   return (
-//     Array.isArray(data) &&
-//     data.every(
-//       (item) =>
-//         hasSome<object>(item) &&
-//         'color' in item &&
-//         'name' in item &&
-//         'wins' in item &&
-//         'time' in item &&
-//         typeof item.wins === 'number' &&
-//         typeof item.time === 'number' &&
-//         typeof item.color === 'string' &&
-//         typeof item.name === 'string',
-//     )
-//   );
-// }
-
 export function getDetailedData(page = 1) {
   return getWinners(page)
     .then((winnersResponse) => {
@@ -56,8 +38,7 @@ export function getDetailedData(page = 1) {
         };
       });
     })
-    .catch((error) => {
-      console.warn('Failed to get winners data:', error);
+    .catch(() => {
       return {
         totalCount: 0,
         detailedWinners: [],

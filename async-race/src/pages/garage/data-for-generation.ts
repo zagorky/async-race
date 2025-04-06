@@ -2,33 +2,42 @@ import { getRandomColor } from '~/utils/random-function.ts';
 
 export const carBrands = [
   'Tesla',
-  'Dasha',
   'Porsche',
-  'Sasarik',
   'Ferrari',
-  'BMW',
-  'Mercedes',
+  'Lamborghini',
+  'Aston Martin',
+  'Bugatti',
+  'McLaren',
   'Popik',
-  'Toyota',
-  'Honda',
+  'Pagani',
+  'Rolls-Royce',
+  'Bentley',
+  'Maserati',
+  'Alfa Romeo',
+  'Lexus',
+  'Genesis',
 ];
 
 export const carModels = [
-  'Model S',
-  'Mustang',
-  '911',
-  'Popik',
-  'F40',
-  'M5',
-  'AMG GT',
+  'Roadster 2025',
+  '911 GT3 RS',
+  'SF90 Stradale',
+  'Revuelto V12',
+  'Valkyrie',
+  'Chiron Super Sport',
   'Sasarik',
-  'Dasha',
-  'Supra',
-  'Civic Type R',
+  'Jesko Absolut',
+  'Huayra R',
+  'Phantom VIII',
+  'Continental GT Speed',
+  'MC20 Cielo',
+  '33 Stradale',
+  'LFA Nürburgring',
+  'G90 Excellence',
 ];
 
 export function generateRandomCars() {
-  const numberOfNewCars = 10; // TODO не забудь исправить на 100
+  const numberOfNewCars = 100;
   const cars = [];
   for (let i = 0; i < numberOfNewCars; i += 1) {
     const brand = carBrands[Math.floor(Math.random() * carBrands.length)];

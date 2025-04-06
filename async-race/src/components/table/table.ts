@@ -1,5 +1,5 @@
 import type { WinnerDetailedDataType } from '~/api/winners-api.ts';
-import { Button, Cell, Row, Table, TableBody, TableHeader } from '~/utils/factory.ts';
+import { Button, Cell, Row, TableBody, TableHeader } from '~/utils/factory.ts';
 import { createCarPicture } from '~/components/car/car-view.ts';
 
 type SortConfig = {
@@ -11,12 +11,9 @@ export function createWinnersTable(initialWinners: WinnerDetailedDataType[]) {
   const tableBody = TableBody('');
   let winners = [...initialWinners];
   let sortConfig: SortConfig | null = null;
-  const winsButton = Button('Wins ↑');
-  const timeButton = Button('Time ↑');
+  const { winsButton, timeButton } = createSortButtons();
 
-  const table = Table(
-    TableHeader(Row([Cell('ID'), Cell('Car'), Cell('Name'), Cell(winsButton), Cell(timeButton)])),
-  );
+  const table = createTableHeader(winsButton, timeButton);
 
   const updateTable = () => {
     tableBody.replaceChildren();
@@ -48,6 +45,18 @@ export function createWinnersTable(initialWinners: WinnerDetailedDataType[]) {
 
   updateTable();
   return { table, updateTable: updateData, tableBody };
+}
+
+function createTableHeader(winsButton: HTMLButtonElement, timeButton: HTMLButtonElement) {
+  return TableHeader(
+    Row([Cell('ID'), Cell('Car'), Cell('Name'), Cell(winsButton), Cell(timeButton)]),
+  );
+}
+
+function createSortButtons() {
+  const winsButton = Button('Wins ↑');
+  const timeButton = Button('Time ↑');
+  return { winsButton, timeButton };
 }
 
 function createWinnerRow(winner: WinnerDetailedDataType) {

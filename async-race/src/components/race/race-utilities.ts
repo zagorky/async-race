@@ -53,31 +53,7 @@ export async function startRace(cars: GarageDataType[]) {
 
   stateManager.transitionRaceState('preparing');
 
-  const model = createCarModel();
-
-  const racePromises = cars.map(async (car) => {
-    const element = findCarByID(car.id);
-
-    try {
-      const data = await model.startCar(car.id);
-      const duration = calculateAnimationDuration(data.velocity, data.distance);
-      animateCar(element, duration);
-
-      const driveResult = await model.driveCar(car.id);
-      if (!driveResult.success) {
-        handleCarBreakdown(element);
-        if (stateManager.getCurrentState() === 'racing') {
-          stateManager.transitionRaceState('finished');
-        }
-        return null;
-      }
-      return { id: car.id, time: duration, name: car.name };
-    } catch {
-      const element = findCarByID(car.id);
-      handleCarBreakdown(element);
-      return null;
-    }
-  });
+  const racePromises = cars.map(async (car) => raceSingleCar(car));
 
   stateManager.transitionRaceState('racing');
 
@@ -89,37 +65,64 @@ export async function startRace(cars: GarageDataType[]) {
     }
   }
   if (winner) {
-    const divider = 1000;
-    const time = winner.time && winner.time > 0 ? Number((winner.time / divider).toFixed(1)) : 0;
+    await processWinner(winner);
     stateManager.transitionRaceState('finished');
-    createModal(`Winner: ${winner.name} (Time: ${time}s)`);
-    try {
-      const allWinners = await getWinners().then((data) => data.data);
-      const existingWinner = allWinners.find((w) => w.id === winner.id);
-
-      if (existingWinner) {
-        const updatedWinnerData = {
-          id: winner.id,
-          wins: (existingWinner.wins || 0) + 1,
-          time: time,
-        };
-
-        await updateWinner(winner.id, updatedWinnerData);
-      } else {
-        const newWinnerData = {
-          id: winner.id,
-          wins: 1,
-          time: time,
-        };
-
-        await setWinner(newWinnerData);
-      }
-    } catch (error) {
-      console.warn('Failed to save winner:', error);
-    }
   } else {
     stateManager.transitionRaceState('finished');
     createModal('All cats are broken, there are no winners');
+  }
+}
+
+async function raceSingleCar(
+  car: GarageDataType,
+): Promise<{ id: number; time: number; name: string } | null> {
+  const element = findCarByID(car.id);
+  if (!element) return null;
+
+  try {
+    const data = await createCarModel().startCar(car.id);
+    const duration = calculateAnimationDuration(data.velocity, data.distance);
+    animateCar(element, duration);
+
+    const driveResult = await createCarModel().driveCar(car.id);
+    if (!driveResult.success) {
+      handleCarBreakdown(element);
+      return null;
+    }
+    return { id: car.id, time: duration, name: car.name };
+  } catch {
+    handleCarBreakdown(element);
+    return null;
+  }
+}
+
+async function processWinner(winner: { id: number; time: number; name: string }) {
+  const divider = 1000;
+  const time = winner.time > 0 ? Number((winner.time / divider).toFixed(1)) : 0;
+
+  createModal(`Winner: ${winner.name} (Time: ${time}s)`);
+
+  try {
+    const allWinners = await getWinners().then((data) => data.data);
+    const existingWinner = allWinners.find((w) => w.id === winner.id);
+
+    try {
+      await (existingWinner
+        ? updateWinner(winner.id, {
+            id: winner.id,
+            wins: (existingWinner.wins || 0) + 1,
+            time: Math.min(existingWinner.time, time),
+          })
+        : setWinner({
+            id: winner.id,
+            wins: 1,
+            time: time,
+          }));
+    } catch (error) {
+      console.error('Failed to save winner data:', error);
+    }
+  } catch (error) {
+    console.error('Failed to fetch winners list:', error);
   }
 }
 
@@ -127,7 +130,7 @@ export function resetRace(cars: GarageDataType[]) {
   cars.forEach((car) => {
     const element = findCarByID(car.id);
     assertIsInstanceOf(HTMLElement, element);
-    returnCar(car.id);
+    resetCarPosition(element);
   });
   stateManager.transitionRaceState('initial');
 }
@@ -138,12 +141,16 @@ function findCarByID(id: number) {
   return element?.element;
 }
 
+// export function returnCar(id: number) {
+//   const model = createCarModel();
+//   const carElement = findCarByID(id);
+//   model.returnCar(id).catch((error) => console.warn(`Car #${id}:`, error));
+//   resetCarPosition(carElement);
+// }
+
 export function returnCar(id: number) {
-  const model = createCarModel();
   const carElement = findCarByID(id);
-  model.returnCar(id).catch((error) => console.warn(`Car #${id}:`, error));
   resetCarPosition(carElement);
-  stateManager.transitionRaceState('initial');
 }
 
 export function deleteCar(id: number, container: HTMLElement) {

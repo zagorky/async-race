@@ -21,32 +21,28 @@ export function isGarageModel(model: unknown): model is GarageModelType {
 }
 
 export function createGarageModel(): GarageModelType {
-  const savedPage = sessionStorage.getItem('Zagorky: garagePage') || '1';
-  let currentPage = Math.max(1, Number.parseInt(savedPage));
-  const carPerPage = 7;
-  let totalCars = 0;
-
+  const state = initializeGarageState();
   return {
-    carPerPage,
-    getTotalCars: () => totalCars,
-    getCurrentPage: () => currentPage,
-    getTotalPages: () => Math.ceil(totalCars / carPerPage),
+    carPerPage: state.carPerPage,
+    getTotalCars: () => state.totalCars,
+    getCurrentPage: () => state.currentPage,
+    getTotalPages: () => Math.ceil(state.totalCars / state.carPerPage),
     addCar: (data: Omit<GarageDataType, 'id'>) =>
       setCar(data)
         .then(() => {
-          totalCars += 1;
-          return Math.ceil((totalCars + 1) / carPerPage);
+          state.totalCars += 1;
+          return Math.ceil((state.totalCars + 1) / state.carPerPage);
         })
         .catch((error) => {
           throw error;
         }),
-    getCars: (page = currentPage) => {
-      currentPage = page;
-      sessionStorage.setItem('Zagorky: garagePage', currentPage.toString());
+    getCars: (page = state.currentPage) => {
+      state.currentPage = page;
+      sessionStorage.setItem('Zagorky: garagePage', state.currentPage.toString());
       return getCars(page)
         .then(({ data, totalCount }) => {
           if (hasSome(totalCount)) {
-            totalCars = totalCount;
+            state.totalCars = totalCount;
           }
           return data;
         })
@@ -60,5 +56,15 @@ export function createGarageModel(): GarageModelType {
         .catch((error) => {
           throw error;
         }),
+  };
+}
+
+function initializeGarageState() {
+  const savedPage = sessionStorage.getItem('Zagorky: garagePage') || '1';
+  const carPerPage = 7;
+  return {
+    currentPage: Math.max(1, Number.parseInt(savedPage)),
+    carPerPage,
+    totalCars: 0,
   };
 }
