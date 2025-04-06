@@ -1,13 +1,13 @@
 import type { GarageDataType } from '~/api/garage-api.ts';
 import { Button, Div } from '~/utils/factory.ts';
-import { createModal, createUpdateCarModal } from '~/pages/modals.ts';
-import type { CarViewType } from '~/pages/car/car-view.ts';
-import { createCarView } from '~/pages/car/car-view.ts';
-import type { CarModelType } from '~/pages/car/car-model.ts';
-import { createCarModel } from '~/pages/car/car-model.ts';
+import { createModal, createUpdateCarModal } from '~/components/modals/modals.ts';
+import type { CarViewType } from '~/components/car/car-view.ts';
+import { createCarView } from '~/components/car/car-view.ts';
+import type { CarModelType } from '~/components/car/car-model.ts';
+import { createCarModel } from '~/components/car/car-model.ts';
 import { replaceCssClass } from '~/utils/helpers.ts';
-import { carAnimations } from '~/pages/animation/animation.ts';
-import { returnCar, startCar } from '~/pages/race/race-utilities.ts';
+import { carAnimations } from '~/components/animation/animation.ts';
+import { returnCar, startCar } from '~/components/race/race-utilities.ts';
 import { registerButtons } from '~/state/state-manager.ts';
 
 export function createCarController(carData: GarageDataType) {

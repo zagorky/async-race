@@ -90,9 +90,3 @@ export function createAddCarModal(onAdd: (data: Omit<GarageDataType, 'id'>) => v
 
   return modal;
 }
-
-export function createWinnerModal(message: string) {
-  const modal = createPopup({ children: message });
-  document.body.append(modal);
-  modal.showModal();
-}

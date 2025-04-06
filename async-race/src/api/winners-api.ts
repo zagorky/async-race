@@ -47,14 +47,6 @@ export function getDetailedData(page = 1) {
             time: winner.time,
           };
         });
-        // .catch((error) => {
-        //   const notFound = 404;
-        //   if (error.response.status === notFound) {
-        //     console.warn(`Cat with id ${winner.id} not found in garage, but exists in winners`);
-        //     return null;
-        //   }
-        //   throw error;
-        // });
       });
 
       return Promise.all(detailedPromises).then((detailedWinners) => {

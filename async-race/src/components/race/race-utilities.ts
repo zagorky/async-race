@@ -1,13 +1,13 @@
-import { createCarModel } from '~/pages/car/car-model.ts';
+import { createCarModel } from '~/components/car/car-model.ts';
 import {
   animateCar,
   calculateAnimationDuration,
   carAnimations,
   handleCarBreakdown,
   resetCarPosition,
-} from '~/pages/animation/animation.ts';
+} from '~/components/animation/animation.ts';
 import { assertIsInstanceOf, assertIsNonNullable } from '@powwow-js/core';
-import { createModal } from '~/pages/modals.ts';
+import { createModal } from '~/components/modals/modals.ts';
 import type { GarageDataType } from '~/api/garage-api.ts';
 import { getWinners, setWinner, updateWinner } from '~/api/winners-api.ts';
 import { buttonStore, stateManager } from '~/state/state-manager.ts';

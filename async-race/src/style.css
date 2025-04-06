@@ -64,6 +64,7 @@ input[type='color'] {
 }
 
 .broken-car {
+  position: relative;
   animation:
     blood-glitch 1.2s infinite,
     jump 1.2s infinite;

@@ -2,7 +2,7 @@ import { Div, H2, Section } from '~/utils/factory.ts';
 import { replaceCssClass } from '~/utils/helpers.ts';
 import type { GarageDataType } from '~/api/garage-api.ts';
 import { createControlsContainer, updateCarView } from '~/pages/garage/garage-controller.ts';
-import { createHeader } from '~/pages/header/header.ts';
+import { createHeader } from '~/components/header/header.ts';
 import type { GarageModelType } from '~/pages/garage/garage-model.ts';
 
 export function createGarageView(

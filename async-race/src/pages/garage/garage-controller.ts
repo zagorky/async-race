@@ -4,12 +4,15 @@ import { Button, Div } from '~/utils/factory.ts';
 import type { GarageModelType } from '~/pages/garage/garage-model.ts';
 import { createGarageModel } from '~/pages/garage/garage-model.ts';
 import { createGarageView } from '~/pages/garage/garage-view.ts';
-import { createAddCarModal, createModal } from '~/pages/modals.ts';
+import { createAddCarModal, createModal } from '~/components/modals/modals.ts';
 import { generateRandomCars } from '~/pages/garage/data-for-generation.ts';
-import { createCarController } from '~/pages/car/car-controller.ts';
-import { createPaginationButtons, createPaginationInfo } from '~/pages/pagination/pagination.ts';
+import { createCarController } from '~/components/car/car-controller.ts';
+import {
+  createPaginationButtons,
+  createPaginationInfo,
+} from '~/components/pagination/pagination.ts';
 import { replaceCssClass } from '~/utils/helpers.ts';
-import { resetRace, startRace } from '~/pages/race/race-utilities.ts';
+import { resetRace, startRace } from '~/components/race/race-utilities.ts';
 import { registerButtons } from '~/state/state-manager.ts';
 import { createPopup } from '~/utils/modal.ts';
 
@@ -17,10 +20,8 @@ export async function createGarageController() {
   try {
     const model = createGarageModel();
     const cars = await model.getCars(model.getCurrentPage());
-    const { element: paginationInfo, update: updatePagination } = createPaginationInfo(model);
-
-    const view = createGarageView(cars, model, updatePagination);
-
+    const { element: paginationInfo, update: updatePaginationInfo } = createPaginationInfo(model);
+    const view = createGarageView(cars, model, updatePaginationInfo);
     view.prepend(paginationInfo);
     return view;
   } catch (error) {

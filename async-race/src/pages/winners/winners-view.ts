@@ -10,11 +10,11 @@ import {
   TableHeader,
 } from '~/utils/factory.ts';
 import type { WinnerDetailedDataType } from '~/api/winners-api.ts';
-import { createHeader } from '~/pages/header/header.ts';
-import { createCarPicture } from '~/pages/car/car-view.ts';
+import { createHeader } from '~/components/header/header.ts';
+import { createCarPicture } from '~/components/car/car-view.ts';
 import type { WinnerModelType } from '~/pages/winners/winners-model.ts';
 import { handleSort } from '~/pages/winners/winners-controller.ts';
-import { createPaginationButtons } from '~/pages/pagination/pagination.ts';
+import { createPaginationButtons } from '~/components/pagination/pagination.ts';
 import { replaceCssClass } from '~/utils/helpers.ts';
 
 export function createWinnersView(
@@ -24,11 +24,18 @@ export function createWinnersView(
 ) {
   const pageName = 'Winners';
   const { table, updateTable } = createWinnersTable(winners);
-  console.log(updateTable);
 
-  const paginationContainer = Div(createPaginationButtons(table, model, onUpdate), {
-    id: 'pagination-container',
-  });
+  const fullUpdate = (newWinners: WinnerDetailedDataType[]) => {
+    updateTable(newWinners);
+    onUpdate();
+  };
+
+  const paginationContainer = Div(
+    createPaginationButtons(table, model, () => fullUpdate),
+    {
+      id: 'pagination-container',
+    },
+  );
 
   replaceCssClass(paginationContainer, ['flex-col'], ['flex-row']);
   return Section([createHeader(), H2(pageName), paginationContainer, table]);

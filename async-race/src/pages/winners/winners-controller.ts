@@ -1,15 +1,15 @@
 import { createWinnersModel } from '~/pages/winners/winners-model.ts';
 import { addWinnerToTable, createWinnersView } from '~/pages/winners/winners-view.ts';
 import type { WinnerDetailedDataType } from '~/api/winners-api.ts';
-import { createPaginationInfo } from '~/pages/pagination/pagination.ts';
+import { createPaginationInfo } from '~/components/pagination/pagination.ts';
 import { createPopup } from '~/utils/modal.ts';
 
 export async function createWinnersController() {
   try {
     const model = createWinnersModel();
-    const { element: paginationInfo, update: updatePagination } = createPaginationInfo(model);
     const winners = await model.getWinners(model.getCurrentPage());
-    const view = createWinnersView(winners, model, updatePagination);
+    const { element: paginationInfo, update: updatePaginationInfo } = createPaginationInfo(model);
+    const view = createWinnersView(winners, model, updatePaginationInfo);
     view.prepend(paginationInfo);
     return view;
   } catch (error) {

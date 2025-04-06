@@ -3,7 +3,7 @@ import { isWinnersModel } from '~/pages/winners/winners-model.ts';
 import { Button, Div } from '~/utils/factory.ts';
 import type { GarageModelType } from '~/pages/garage/garage-model.ts';
 import { isGarageModel } from '~/pages/garage/garage-model.ts';
-import { createModal } from '~/pages/modals.ts';
+import { createModal } from '~/components/modals/modals.ts';
 import { updateCarView } from '~/pages/garage/garage-controller.ts';
 import { createWinnersTable } from '~/pages/winners/winners-view.ts';
 import type { GarageDataType } from '~/api/garage-api.ts';
@@ -58,7 +58,7 @@ export function handlePagination(
   }
   if (isWinnersModel(model)) {
     model
-      .getWinners()
+      .getWinners(newPage)
       .then((winners) => {
         container.replaceChildren();
         createWinnersTable(winners);
