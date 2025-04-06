@@ -20,7 +20,8 @@ export function isWinnersModel(model: unknown): model is WinnerModelType {
 }
 
 export function createWinnersModel(): WinnerModelType {
-  let currentPage = 1;
+  const savedPage = sessionStorage.getItem('Zagorky: winnersPage') || '1';
+  let currentPage = Math.max(1, Number.parseInt(savedPage));
   const winnerPerPage = 10;
   let totalWinners = 0;
 
@@ -29,8 +30,9 @@ export function createWinnersModel(): WinnerModelType {
     getTotalPages: () => Math.ceil(totalWinners / winnerPerPage),
     getCurrentPage: () => currentPage,
     getTotalWinners: () => totalWinners,
-    getWinners: (page = 1) => {
+    getWinners: (page = currentPage) => {
       currentPage = page;
+      sessionStorage.setItem('Zagorky: winnersPage', currentPage.toString());
       return getDetailedData(page)
         .then(({ detailedWinners, totalCount }) => {
           if (hasSome(totalCount)) {

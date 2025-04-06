@@ -5,9 +5,9 @@ import type { GarageModelType } from '~/pages/garage/garage-model.ts';
 import { isGarageModel } from '~/pages/garage/garage-model.ts';
 import { createModal } from '~/components/modals/modals.ts';
 import { updateCarView } from '~/pages/garage/garage-controller.ts';
-import { createWinnersTable } from '~/pages/winners/winners-view.ts';
 import type { GarageDataType } from '~/api/garage-api.ts';
 import type { WinnersDataType } from '~/api/winners-api.ts';
+import { createWinnersTable } from '~/components/table/table.ts';
 
 type PaginationModelType = {
   getCurrentPage: () => number;

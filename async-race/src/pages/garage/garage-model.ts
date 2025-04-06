@@ -22,7 +22,8 @@ export function isGarageModel(model: unknown): model is GarageModelType {
 }
 
 export function createGarageModel(): GarageModelType {
-  let currentPage = 1;
+  const savedPage = sessionStorage.getItem('Zagorky: garagePage') || '1';
+  let currentPage = Math.max(1, Number.parseInt(savedPage));
   const carPerPage = 7;
   let totalCars = 0;
 
@@ -53,8 +54,9 @@ export function createGarageModel(): GarageModelType {
         .catch((error) => {
           throw error;
         }),
-    getCars: (page = 1) => {
+    getCars: (page = currentPage) => {
       currentPage = page;
+      sessionStorage.setItem('Zagorky: garagePage', currentPage.toString());
       return getCars(page)
         .then(({ data, totalCount }) => {
           if (hasSome(totalCount)) {

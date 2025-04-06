@@ -1,77 +1,41 @@
-import {
-  Button,
-  Cell,
-  Div,
-  H2,
-  Row,
-  Section,
-  Table,
-  TableBody,
-  TableHeader,
-} from '~/utils/factory.ts';
+import { Div, H2, Section } from '~/utils/factory.ts';
 import type { WinnerDetailedDataType } from '~/api/winners-api.ts';
 import { createHeader } from '~/components/header/header.ts';
-import { createCarPicture } from '~/components/car/car-view.ts';
 import type { WinnerModelType } from '~/pages/winners/winners-model.ts';
-import { handleSort } from '~/pages/winners/winners-controller.ts';
-import { createPaginationButtons } from '~/components/pagination/pagination.ts';
-import { replaceCssClass } from '~/utils/helpers.ts';
+import {
+  createPaginationButtons,
+  createPaginationInfo,
+} from '~/components/pagination/pagination.ts';
+import { createWinnersTable } from '~/components/table/table.ts';
 
 export function createWinnersView(
-  winners: WinnerDetailedDataType[],
+  initialWinners: WinnerDetailedDataType[],
   model: WinnerModelType,
-  onUpdate: () => void,
 ) {
   const pageName = 'Winners';
-  const { table, updateTable } = createWinnersTable(winners);
+  const { table, updateTable, tableBody } = createWinnersTable(initialWinners);
+  const { element: paginationInfo, update: updatePaginationInfo } = createPaginationInfo(model);
 
-  const fullUpdate = (newWinners: WinnerDetailedDataType[]) => {
-    updateTable(newWinners);
-    onUpdate();
+  const updateAll = (page?: number) => {
+    model
+      .getWinners(page || model.getCurrentPage())
+      .then((winners) => {
+        updateTable(winners);
+        updatePaginationInfo();
+      })
+      .catch((error) => {
+        console.error('Error fetching winners:', error);
+      });
   };
 
-  const paginationContainer = Div(
-    createPaginationButtons(table, model, () => fullUpdate),
-    {
-      id: 'pagination-container',
-    },
-  );
+  const paginationButtons = createPaginationButtons(tableBody, model, () => {
+    updateAll(model.getCurrentPage());
+  });
 
-  replaceCssClass(paginationContainer, ['flex-col'], ['flex-row']);
-  return Section([createHeader(), H2(pageName), paginationContainer, table]);
-}
+  const paginationContainer = Div(paginationButtons, {
+    id: 'pagination-container',
+    class: 'flex-row',
+  });
 
-export function addWinnerToTable(winner: WinnerDetailedDataType) {
-  const cat = createCarPicture(winner.color, winner.id);
-  return Row([
-    Cell(String(winner.id)),
-    Cell(cat),
-    Cell(winner.name),
-    Cell(String(winner.wins)),
-    Cell(String(winner.time)),
-  ]);
-}
-
-export function createWinnersTable(winners: WinnerDetailedDataType[]) {
-  const winsButton = Button('Wins ↑');
-  const timeButton = Button('Time ↑');
-  const tableBody = TableBody('');
-
-  winsButton.addEventListener('click', () => handleSort(winsButton, 'wins', winners, tableBody));
-  timeButton.addEventListener('click', () => handleSort(timeButton, 'time', winners, tableBody));
-
-  const table = Table(
-    TableHeader(Row([Cell('ID'), Cell('Cat'), Cell('Name'), Cell(winsButton), Cell(timeButton)])),
-  );
-
-  function updateTable(newWinners: WinnerDetailedDataType[]) {
-    tableBody.replaceChildren();
-    newWinners.forEach((winner: WinnerDetailedDataType) =>
-      tableBody.append(addWinnerToTable(winner)),
-    );
-  }
-
-  winners.forEach((winner) => tableBody.append(addWinnerToTable(winner)));
-  table.append(tableBody);
-  return { table, updateTable };
+  return Section([createHeader(), H2(pageName), paginationInfo, paginationContainer, table]);
 }
