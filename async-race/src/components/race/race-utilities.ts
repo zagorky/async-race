@@ -1,4 +1,4 @@
-import { createCarModel } from '~/components/car/car-model.ts';
+import { type CarModelType, createCarModel } from '~/components/car/car-model.ts';
 import {
   animateCar,
   calculateAnimationDuration,
@@ -7,10 +7,11 @@ import {
   resetCarPosition,
 } from '~/components/animation/animation.ts';
 import { assertIsInstanceOf, assertIsNonNullable } from '@powwow-js/core';
-import { createModal } from '~/components/modals/modals.ts';
+import { createModal, createUpdateCarModal } from '~/components/modals/modals.ts';
 import type { GarageDataType } from '~/api/garage-api.ts';
 import { getWinners, setWinner, updateWinner } from '~/api/winners-api.ts';
 import { buttonStore, stateManager } from '~/state/state-manager.ts';
+import { createCarController } from '~/components/car/car-controller.ts';
 
 export function startCar(id: number, isSingleCar = false) {
   stateManager.transitionRaceState('preparing');
@@ -143,4 +144,30 @@ export function returnCar(id: number) {
   model.returnCar(id).catch((error) => console.warn(`Car #${id}:`, error));
   resetCarPosition(carElement);
   stateManager.transitionRaceState('initial');
+}
+
+export function deleteCar(id: number, container: HTMLElement) {
+  const model = createCarModel();
+  model
+    .removeCar(id)
+    .then(() => {
+      container.remove();
+      document.body.dispatchEvent(new CustomEvent('delete-car'));
+    })
+    .catch((error: Error) => createModal(`Error deleting car ${error.message}`));
+}
+
+export function updateCar(carData: GarageDataType, model: CarModelType, container: HTMLElement) {
+  const modal = createUpdateCarModal(carData, (updatedData) => {
+    return model
+      .updateCar(updatedData)
+      .then((data) => {
+        const updatedCar = createCarController(data);
+        container.replaceWith(updatedCar);
+      })
+      .catch((error: Error) => createModal(`Error in update ${error.message}`));
+  });
+
+  document.body.append(modal);
+  modal.showModal();
 }

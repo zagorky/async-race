@@ -1,13 +1,12 @@
 import type { GarageDataType } from '~/api/garage-api.ts';
 import { Button, Div } from '~/utils/factory.ts';
-import { createModal, createUpdateCarModal } from '~/components/modals/modals.ts';
 import type { CarViewType } from '~/components/car/car-view.ts';
 import { createCarView } from '~/components/car/car-view.ts';
 import type { CarModelType } from '~/components/car/car-model.ts';
 import { createCarModel } from '~/components/car/car-model.ts';
 import { replaceCssClass } from '~/utils/helpers.ts';
 import { carAnimations } from '~/components/animation/animation.ts';
-import { returnCar, startCar } from '~/components/race/race-utilities.ts';
+import { deleteCar, returnCar, startCar, updateCar } from '~/components/race/race-utilities.ts';
 import { registerButtons } from '~/state/state-manager.ts';
 
 export function createCarController(carData: GarageDataType) {
@@ -52,24 +51,10 @@ export function createCarControls(carData: GarageDataType, model: CarModelType, 
   });
 
   updateCarButton.addEventListener('click', () => {
-    const modal = createUpdateCarModal(carData, (updatedData) => {
-      return model
-        .updateCar(updatedData)
-        .then((data) => {
-          const updatedCar = createCarController(data);
-          view.container.replaceWith(updatedCar);
-        })
-        .catch((error: Error) => createModal(`Error in update ${error.message}`));
-    });
-
-    document.body.append(modal);
-    modal.showModal();
+    updateCar(carData, model, view.container);
   });
   removeCarButton.addEventListener('click', () => {
-    model
-      .removeCar(carData.id)
-      .then(() => view.container.remove())
-      .catch((error: Error) => createModal(`error in delete ${error.message}`));
+    deleteCar(carData.id, view.container);
   });
   startCarButton.addEventListener('click', () => {
     startCar(carData.id, true);

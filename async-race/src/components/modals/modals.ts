@@ -52,9 +52,9 @@ export function createAddCarModal(onAdd: (data: Omit<GarageDataType, 'id'>) => v
   const ID = 'new';
   const defaultName = 'New Cat';
   const defaultColor = '#ef1ba6';
-
   const colorLabel = Label('Color: ', `color-${ID}`);
   const nameLabel = Label('Name: ', `name-${ID}`);
+  const addButton = Button('Add');
 
   const colorInput = Input('Color', {
     id: `color-${ID}`,
@@ -68,8 +68,6 @@ export function createAddCarModal(onAdd: (data: Omit<GarageDataType, 'id'>) => v
     type: 'text',
     placeholder: defaultName,
   });
-
-  const addButton = Button('Add');
 
   const modal = createPopup({
     children: [colorLabel, colorInput, nameLabel, nameInput, addButton],

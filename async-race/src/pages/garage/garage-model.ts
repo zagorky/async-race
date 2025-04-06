@@ -1,5 +1,5 @@
 import type { GarageDataType } from '~/api/garage-api.ts';
-import { deleteCar, setCar, getCars } from '~/api/garage-api.ts';
+import { setCar, getCars } from '~/api/garage-api.ts';
 import { hasSome } from '@powwow-js/core';
 import type { WinnersDataType } from '~/api/winners-api.ts';
 import { setWinner } from '~/api/winners-api.ts';
@@ -10,7 +10,6 @@ export type GarageModelType = {
   getTotalPages: () => number;
   getCurrentPage: () => number;
   addCar: (car: Omit<GarageDataType, 'id'>) => Promise<number>;
-  removeCar: (id: number) => Promise<number>;
   setWinner: (data: WinnersDataType) => Promise<WinnersDataType>;
   getCars: (page?: number) => Promise<GarageDataType[]>;
 };
@@ -37,19 +36,6 @@ export function createGarageModel(): GarageModelType {
         .then(() => {
           totalCars += 1;
           return Math.ceil((totalCars + 1) / carPerPage);
-        })
-        .catch((error) => {
-          throw error;
-        }),
-    removeCar: (id: number) =>
-      deleteCar(id)
-        .then(() => {
-          totalCars -= 1;
-          const lastPage = Math.ceil(totalCars / carPerPage);
-          if (currentPage > lastPage && lastPage > 0) {
-            currentPage = lastPage;
-          }
-          return currentPage;
         })
         .catch((error) => {
           throw error;

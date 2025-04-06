@@ -11,7 +11,6 @@ export function createWinnersTable(initialWinners: WinnerDetailedDataType[]) {
   const tableBody = TableBody('');
   let winners = [...initialWinners];
   let sortConfig: SortConfig | null = null;
-
   const winsButton = Button('Wins ↑');
   const timeButton = Button('Time ↑');
 
@@ -34,10 +33,8 @@ export function createWinnersTable(initialWinners: WinnerDetailedDataType[]) {
     const button = field === 'wins' ? winsButton : timeButton;
     const currentDirection = button.textContent?.includes('↑') ? 'asc' : 'desc';
     const newDirection = currentDirection === 'asc' ? 'desc' : 'asc';
-
     button.textContent = `${field} ${newDirection === 'asc' ? '↑' : '↓'}`;
     sortConfig = { field, direction: newDirection };
-
     updateTable();
   };
 

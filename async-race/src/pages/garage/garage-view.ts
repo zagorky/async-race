@@ -34,6 +34,8 @@ export function createGarageView(cars: GarageDataType[], model: GarageModelType)
     },
   );
 
+  document.body.addEventListener('delete-car', () => updateAll(model.getCurrentPage()));
+
   replaceCssClass(controls, ['flex-col'], ['flex-row', 'flex-wrap']);
   replaceCssClass(container, [], ['w-full']);
   updateCarView(container, cars);

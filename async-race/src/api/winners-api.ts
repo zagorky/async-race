@@ -97,8 +97,5 @@ export const getWinners = (page = 1) =>
 export const setWinner = (data: unknown) =>
   fetchAndValidateData(isWinnerData)(path.winners, requestConfig.post(data));
 
-export const getWinner = (id: number) =>
-  fetchAndValidateData(isWinnerData)(`${path.winners}/${id}`, requestConfig.get);
-
 export const updateWinner = (id: number, data: unknown) =>
   fetchAndValidateData(isWinnersData)(`${path.winners}/${id}`, requestConfig.put(data));
