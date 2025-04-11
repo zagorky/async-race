@@ -15,13 +15,6 @@ export const H2 = (children: Children): HTMLHeadingElement =>
     children,
   });
 
-export const Main = (children: Children): HTMLElement =>
-  createElement({
-    tag: 'main',
-    cssClasses: ['flex', 'flex-col', 'justify-center', 'items-center'],
-    children,
-  });
-
 export const Section = (children: Children): HTMLElement =>
   createElement({
     tag: 'section',
@@ -125,37 +118,8 @@ export const Dialog = (children: Children): HTMLDialogElement =>
     children,
   });
 
-export const AudioElement = (source: string): HTMLAudioElement =>
-  createElement({ tag: 'audio', attributes: { preload: 'auto', src: source } });
-
-export const Ul = (children: Children): HTMLUListElement =>
-  createElement({ tag: 'ul', children, cssClasses: ['flex', 'flex-col', 'items-end'] });
-
-export const Li = (children: Children): HTMLLIElement => createElement({ tag: 'li', children });
-
 export const Span = (children: Children): HTMLSpanElement =>
   createElement({ tag: 'span', children, cssClasses: ['capitalize'] });
-
-export const Form = (children: Children): HTMLFormElement =>
-  createElement({
-    tag: 'form',
-    children,
-    cssClasses: ['flex', 'items-center', 'justify-center', 'flex-col'],
-  });
-
-export const TextArea = (
-  children: Children,
-  attributes?: Record<string, string>,
-): HTMLTextAreaElement =>
-  createElement({
-    tag: 'textarea',
-    children,
-    cssClasses: ['bg-white', 'p-6', 'rounded-2xl', 'shadow-xl', 'font-mono'],
-    attributes: { ...attributes },
-  });
-
-export const Table = (children: Children, attributes?: Record<string, string>): HTMLTableElement =>
-  createElement({ tag: 'table', children, attributes });
 
 export const TableHeader = (
   children: Children,

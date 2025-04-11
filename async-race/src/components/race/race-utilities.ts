@@ -141,13 +141,6 @@ function findCarByID(id: number) {
   return element?.element;
 }
 
-// export function returnCar(id: number) {
-//   const model = createCarModel();
-//   const carElement = findCarByID(id);
-//   model.returnCar(id).catch((error) => console.warn(`Car #${id}:`, error));
-//   resetCarPosition(carElement);
-// }
-
 export function returnCar(id: number) {
   const carElement = findCarByID(id);
   resetCarPosition(carElement);

@@ -6,8 +6,6 @@ export type AnimationState = {
   currentPosition: number;
 };
 
-let animationFrameId: number | null = null;
-
 export const carAnimations = new Map<HTMLElement, AnimationState>();
 
 export function animateCar(carElement: HTMLElement, duration: number) {
@@ -40,14 +38,6 @@ export function animateCar(carElement: HTMLElement, duration: number) {
 
     animationState.frameId = requestAnimationFrame(animate);
   }
-}
-
-export function stopCar(carElement: HTMLElement) {
-  if (animationFrameId) {
-    cancelAnimationFrame(animationFrameId);
-    animationFrameId = null;
-  }
-  carElement.style.transform = 'translateX(0)';
 }
 
 export function calculateAnimationDuration(velocity: number, distance: number) {

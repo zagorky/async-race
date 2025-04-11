@@ -5,8 +5,6 @@ export type EngineDataType = {
   distance: number;
 };
 
-export type EngineStatusType = 'started' | 'stopped' | 'drive';
-
 export type EngineMode = Record<'success', boolean>;
 
 const isEngineData = (data: unknown): data is EngineDataType => {
